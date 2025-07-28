@@ -2,11 +2,14 @@ package com.stayfinder.Auth_Service.services;
 
 
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +19,30 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "qLkxqgVY9sJ05uVeNuSWSMAwyAaoN6oqD4kLTlUsCKqZlEuziQC8psV8jkHQx18B";
+    private static String SECRET_KEY = "";
 
+    public JwtService() {
+        try {
+            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+            SecretKey sk = keyGenerator.generateKey();
+            SECRET_KEY = Base64.getEncoder().encodeToString(sk.getEncoded());
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     public String extractUsername(String token) {
 
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(@NotNull UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<String, Object>();
         userDetails.getAuthorities().forEach(auth-> claims.put("role", auth.getAuthority()));
         return generateToken(claims, userDetails);
