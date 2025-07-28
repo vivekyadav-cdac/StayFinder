@@ -1,5 +1,6 @@
 package com.stayfinder.Auth_Service.models;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class User implements UserDetails {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 4475362821305523304L;
 
     @Id
