@@ -2,7 +2,7 @@ package com.stayfinder.Auth_Service.models;
 
 public enum Role {
 
-    USER,
+    TENANT,
     ADMIN,
     OWNER
 }

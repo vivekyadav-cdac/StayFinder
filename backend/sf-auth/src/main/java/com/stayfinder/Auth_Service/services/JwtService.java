@@ -1,41 +1,58 @@
 package com.stayfinder.Auth_Service.services;
 
 
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.io.InputStream;
+import java.security.*;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import jakarta.annotation.PostConstruct;
+
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 
 @Service
 public class JwtService {
 
-    private static String SECRET_KEY = "";
 
-    public JwtService() {
-        try {
-            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = keyGenerator.generateKey();
-            SECRET_KEY = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+    @Value("${jwt.keystore.location}")
+    private Resource keystore;
+
+    @Value("${jwt.keystore.password}")
+    private String keystorePassword;
+
+    @Value("${jwt.keystore.alias}")
+    private String keyAlias;
+
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
+
+
+    @PostConstruct
+    public void init() throws Exception {
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        try (InputStream inputStream = keystore.getInputStream()) {
+            keyStore.load(inputStream, keystorePassword.toCharArray());
         }
 
+        Key key = keyStore.getKey(keyAlias, keystorePassword.toCharArray());
+        if (key instanceof PrivateKey) {
+            privateKey = (PrivateKey) key;
+            publicKey = keyStore.getCertificate(keyAlias).getPublicKey();
+        } else {
+            throw new RuntimeException("Invalid key");
+        }
     }
     public String extractUsername(String token) {
 
@@ -67,7 +84,8 @@ public class JwtService {
         return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256).compact();
+                .signWith(privateKey, SignatureAlgorithm.RS256)
+                .compact();
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -76,12 +94,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(getSignInKey()).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody();
     }
 
-    private Key getSignInKey() {
-
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
 }
