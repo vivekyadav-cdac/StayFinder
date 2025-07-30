@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.stayfinder.Auth_Service.models.Role;
+import com.stayfinder.Auth_Service.models.User;
 import jakarta.annotation.PostConstruct;
 
 import org.jetbrains.annotations.NotNull;
@@ -54,19 +56,29 @@ public class JwtService {
             throw new RuntimeException("Invalid key");
         }
     }
+
     public String extractUsername(String token) {
 
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(@NotNull UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<String, Object>();
-        userDetails.getAuthorities().forEach(auth-> claims.put("role", auth.getAuthority()));
-        return generateToken(claims, userDetails);
+    public String generateToken(@NotNull User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", user.getRole());
+        if (user.getRole().equals(Role.ADMIN)) {
+            claims.put("adminId", user.getId());
+        }
+        if (user.getRole().equals(Role.OWNER)) {
+            claims.put("ownerId", user.getId());
+        }
+        if (user.getRole().equals(Role.TENANT)) {
+            claims.put("tenantId", user.getId());
+        }
+        return generateToken(claims, user);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String  username = extractUsername(token);
+        final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
