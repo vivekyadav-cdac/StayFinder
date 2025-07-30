@@ -63,7 +63,7 @@ public class JwtService {
     }
 
     public String generateToken(@NotNull User user) {
-        Map<String, Object> claims = new HashMap<String, Object>();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("role", user.getRole());
         if (user.getRole().equals(Role.ADMIN)) {
             claims.put("adminId", user.getId());
