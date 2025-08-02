@@ -2,9 +2,9 @@ package com.stayfinder.Auth_Service.services;
 
 
 import com.stayfinder.Auth_Service.exceptions.UserAlreadyExistsException;
-import com.stayfinder.Auth_Service.models.AuthenticationRequest;
-import com.stayfinder.Auth_Service.models.AuthenticationResponse;
-import com.stayfinder.Auth_Service.models.RegisterRequest;
+import com.stayfinder.Auth_Service.dto.AuthenticationRequest;
+import com.stayfinder.Auth_Service.dto.AuthenticationResponse;
+import com.stayfinder.Auth_Service.dto.RegisterRequest;
 import com.stayfinder.Auth_Service.models.User;
 import com.stayfinder.Auth_Service.repositories.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -24,13 +24,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    @Autowired
     private final UserRepository repository;
-    @Autowired
+
     private final PasswordEncoder passwordEncoder;
-    @Autowired
+
     private final JwtService jwtService;
-    @Autowired
+
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
@@ -39,24 +38,21 @@ public class AuthenticationService {
         BeanUtils.copyProperties(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-
         if (repository.findByEmail(user.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("User with email already exists.");
         }
-        repository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+
+        User addedUser = repository.save(user);
+
+        var jwtToken = jwtService.generateToken(addedUser);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-
         User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User does not exists. Please register"));
-        try {
-            authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }

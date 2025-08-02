@@ -1,4 +1,4 @@
-package com.stayfinder.Auth_Service.models;
+package com.stayfinder.Auth_Service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

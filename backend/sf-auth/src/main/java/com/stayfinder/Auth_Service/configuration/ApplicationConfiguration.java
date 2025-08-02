@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ApplicationConfiguration {
 
-    @Autowired
+
     private final UserRepository repository;
 
     @Bean
