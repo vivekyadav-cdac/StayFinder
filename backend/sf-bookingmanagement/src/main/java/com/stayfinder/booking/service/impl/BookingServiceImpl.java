@@ -1,13 +1,16 @@
 package com.stayfinder.booking.service.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.stayfinder.booking.dto.BookingResponse;
 import com.stayfinder.booking.dto.CreateBookingRequest;
+import com.stayfinder.booking.dto.UserDto;
 import com.stayfinder.booking.entity.Booking;
 import com.stayfinder.booking.entity.BookingStatus;
 import com.stayfinder.booking.entity.Pg;
@@ -29,15 +32,41 @@ public class BookingServiceImpl implements BookingService {
 
 	    @Autowired
 	    private UserRepository userRepository;
+	    
+	    @Autowired
+	    private WebClient.Builder webClientBuilder;
+	    
+	    private boolean isRoomAvailable(Long roomId, LocalDate start, LocalDate end) {
+	    	List<Booking> overlapping = bookingRepository.findOverlappingBookings(roomId, start, end);
+	    	return overlapping.isEmpty();
+	    }
+	    
 
+	    
 	    @Override
 	    public BookingResponse bookRoom(CreateBookingRequest request) {
-	        Room room = roomRepository.findById(request.getRoomId())
+	       
+	    	if(!isRoomAvailable(request.getRoomId(), request.getStartDate(), request.getEndDate())) {
+	    		throw new RuntimeException("Room already booked for selected date range.");
+	    	}
+	    	
+	    	Room room = roomRepository.findById(request.getRoomId())
 	                .orElseThrow(() -> new RuntimeException("Room not found"));
 
 	        if (!room.isAvailable()) {
 	            throw new RuntimeException("Room is not available");
 	        }
+	        
+	        // Fetch User details from USER-SERVICE
+	        UserDto user = webClientBuilder.build()
+	                .get()
+	                .uri("http://USER-SERVICE/api/users/" + request.getTenantId())
+	                .retrieve()
+	                .bodyToMono(UserDto.class)
+	                .block();
+	        
+	        // Fetch Room details from PG-SERVICE
+	        
 
 	        User tenant = userRepository.findById(request.getTenantId())
 	                .orElseThrow(() -> new RuntimeException("Tenant not found"));

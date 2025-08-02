@@ -1,5 +1,6 @@
 package com.stayfinder.booking.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import com.stayfinder.booking.dto.PgSummaryResponse;
 import com.stayfinder.booking.dto.RoomResponse;
 import com.stayfinder.booking.dto.SearchPgRequest;
 import com.stayfinder.booking.entity.Pg;
+import com.stayfinder.booking.entity.PgType;
 import com.stayfinder.booking.entity.Room;
 import com.stayfinder.booking.exception.ResourceNotFoundException;
 import com.stayfinder.booking.repository.PgRepository;
@@ -72,6 +74,12 @@ public class PgServiceImpl implements PgService {
                 .longitude(pg.getLongitude())
                 .rooms(roomResponses)
                 .build();
+	}
+
+	@Override
+	public List<Pg> searchPgsByBudget(String city, PgType type, BigDecimal minRent, BigDecimal maxRent) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
