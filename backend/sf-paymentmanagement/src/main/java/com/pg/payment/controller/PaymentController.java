@@ -1,21 +1,16 @@
 package com.pg.payment.controller;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.pg.payment.dto.PaymentRequest;
 import com.pg.payment.model.Payment;
+import com.pg.payment.security.JwtTokenUtil;
 import com.pg.payment.service.PaymentService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -24,30 +19,47 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
     @GetMapping
     public ResponseEntity<List<Payment>> getAllHistory() {
-    	List<Payment> history = paymentService.getAllHistory();
-    	return ResponseEntity.ok(history);
+        return ResponseEntity.ok(paymentService.getAllHistory());
     }
+
     @PostMapping
-    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request) {
-        Payment payment = paymentService.processPayment(request);
-        return new ResponseEntity<>(payment, HttpStatus.CREATED);
+//    @PreAuthorize("hasRole('TENANT')")
+    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request, HttpServletRequest httpRequest) {
+//        String jwt = httpRequest.getHeader("Authorization").substring(7);
+//        Integer tenantId = jwtTokenUtil.extractTenantId(jwt);
+    	Integer tenantId = 200; // simulate a valid user
+        return new ResponseEntity<>(paymentService.processPayment(request, tenantId), HttpStatus.CREATED);
     }
-    
-    @GetMapping
-    @RequestMapping("/history/{bookingId}")
-    public ResponseEntity<List<Payment>> getHistoryByBookingId(@PathVariable Integer bookingId){
-    	List<Payment> payments = paymentService.getHistoryByBookingId(bookingId);
-    	return ResponseEntity.ok(payments);
+
+    @GetMapping("/history/{bookingId}")
+    public ResponseEntity<List<Payment>> getHistoryByBookingId(@PathVariable Integer bookingId) {
+        return ResponseEntity.ok(paymentService.getHistoryByBookingId(bookingId));
     }
-    
-    @DeleteMapping
-    @RequestMapping("/delete/{paymentId}")
-    public ResponseEntity<String> deletePayment(Integer paymentId) {
-    	paymentService.deletePayment(paymentId);
-    	return ResponseEntity.ok("Payment deleted successfully with ID: " + paymentId);
+
+    @DeleteMapping("/delete/{paymentId}")
+    public ResponseEntity<String> deletePayment(@PathVariable Integer paymentId) {
+        paymentService.deletePayment(paymentId);
+        return ResponseEntity.ok("Payment deleted successfully with ID: " + paymentId);
+    }
+
+    @PostMapping("/razorpay/webhook")
+    public ResponseEntity<String> razorpayWebhook(@RequestBody String response) {
+        // TODO: Validate Razorpay signature and update payment status
+        return ResponseEntity.ok("Webhook received and processed.");
+    }
+
+    @GetMapping("/tenant/{tenantId}")
+    public ResponseEntity<List<Payment>> getPaymentsByTenant(@PathVariable Integer tenantId) {
+        return ResponseEntity.ok(paymentService.getPaymentsByTenant(tenantId));
+    }
+
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<Payment>> getPaymentsByOwner(@PathVariable Integer ownerId) {
+        return ResponseEntity.ok(paymentService.getPaymentsByOwner(ownerId));
     }
 }
-
-

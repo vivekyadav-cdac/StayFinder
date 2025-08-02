@@ -1,71 +1,54 @@
 package com.pg.payment.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "bookings")
 public class Booking {
-	@Id
-	@Column(name = "id")
-	private Integer bookingId;
-	
-	private Integer room_id;
-	private Integer tenant_id;
-	
-	@Enumerated(EnumType.STRING)
-	  private BookingStatusEnum status;
-	
-	private LocalDate start_date;
-	private LocalDate end_date;
-	
-	@Column(name = "created_at")
-	  private LocalDateTime createdAt;
-	
-	public Booking() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
 
-	public Booking(Integer bookingId, Integer room_id, Integer tenant_id, BookingStatusEnum status, LocalDate start_date,
-			LocalDate end_date, LocalDateTime createdAt) {
-		super();
-		this.bookingId = bookingId;
-		this.room_id = room_id;
-		this.tenant_id = tenant_id;
-		this.status = status;
-		this.start_date = start_date;
-		this.end_date = end_date;
-		this.createdAt = createdAt;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer bookingId;
 
-	public Integer getBookingId() {
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    private Integer tenant_id;
+
+    @Enumerated(EnumType.STRING)
+    private BookingStatusEnum status;
+
+    private LocalDate start_date;
+    private LocalDate end_date;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+    
+    
+    public Integer getBookingId() {
 		return bookingId;
 	}
 
 	public void setBookingId(Integer bookingId) {
 		this.bookingId = bookingId;
 	}
-
-	public Integer getRoom_id() {
-		return room_id;
+	
+	public Room getRoom() {
+		return room;
 	}
-
-	public void setRoom_id(Integer room_id) {
-		this.room_id = room_id;
+	
+	public void setRoom(Room room) {
+		this.room = room;
 	}
-
+	
 	public Integer getTenant_id() {
 		return tenant_id;
 	}
-
+	
 	public void setTenant_id(Integer tenant_id) {
 		this.tenant_id = tenant_id;
 	}
@@ -81,7 +64,7 @@ public class Booking {
 	public LocalDate getStart_date() {
 		return start_date;
 	}
-
+	
 	public void setStart_date(LocalDate start_date) {
 		this.start_date = start_date;
 	}
@@ -103,13 +86,6 @@ public class Booking {
 	}
 
 	public enum BookingStatusEnum {
-	    PENDING, COMPLETED, FAILED
-	}
-
-	@Override
-	public String toString() {
-		return "Booking [bookingId=" + bookingId + ", room_id=" + room_id + ", tenant_id=" + tenant_id + ", status=" + status
-				+ ", start_date=" + start_date + ", end_date=" + end_date + ", createdAt=" + createdAt + "]";
-	}
-
+        PENDING, COMPLETED, FAILED
+    }
 }

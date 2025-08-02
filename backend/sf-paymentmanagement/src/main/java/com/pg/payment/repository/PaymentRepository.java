@@ -1,15 +1,19 @@
 package com.pg.payment.repository;
 
+import com.pg.payment.model.Payment;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public interface PaymentRepository extends JpaRepository<Payment, Integer> {
 
-import com.pg.payment.model.Payment;
+    @Query("SELECT p FROM Payment p WHERE p.booking.bookingId = ?1")
+    List<Payment> findByBookingId(Integer bookingId);
 
-@Repository
-public interface PaymentRepository extends JpaRepository<Payment, Integer>{
+    @Query("SELECT p FROM Payment p WHERE p.booking.tenant_id = ?1")
+    List<Payment> findByTenantId(Integer tenantId);
 
-	List<Payment> findByBookingId(Integer bookingId);
-
+    @Query("SELECT p FROM Payment p WHERE p.booking.room.pg_id = ?1")
+    List<Payment> findByOwnerId(Integer ownerId);
 }
