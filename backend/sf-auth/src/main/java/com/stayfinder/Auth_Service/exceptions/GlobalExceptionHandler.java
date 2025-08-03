@@ -3,7 +3,6 @@ package com.stayfinder.Auth_Service.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private final Map<String, String> error = new HashMap<String, String>();
+    private final Map<String, String> error = new HashMap<>();
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<?> handleUserAlreadyExists(UserAlreadyExistsException ex) {
