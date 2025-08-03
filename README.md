@@ -10,19 +10,6 @@
 
 ---
 
-## 📑 Table of Contents
-
-1. [Register New User](## 1. ✅ Register New User)
-2. [Get All Users]
-3. [Get User by Email]
-4. [Get User by ID]
-5. [Update User by Email]
-6. [Update User by ID]
-7. [Delete User by Email]
-8. [Delete User by ID]
-
----
-
 ## 1. ✅ Register New User
 
 ```
