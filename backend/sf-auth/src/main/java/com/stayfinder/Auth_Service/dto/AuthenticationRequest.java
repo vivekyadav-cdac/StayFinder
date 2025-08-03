@@ -1,6 +1,4 @@
-package com.stayfinder.Auth_Service.models;
-
-
+package com.stayfinder.Auth_Service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class AuthenticationRequest {
 
-    private String firstName;
-    private String lastName;
     private String email;
     private String password;
-    private Role role;
 }

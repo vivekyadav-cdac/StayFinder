@@ -1,4 +1,4 @@
-package com.stayfinder.Auth_Service.services;
+package com.stayfinder.Auth_Service.services.implementation;
 
 
 import java.io.InputStream;
@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.stayfinder.Auth_Service.models.Role;
-import com.stayfinder.Auth_Service.models.User;
+import com.stayfinder.Auth_Service.dto.UserDto;
+import com.stayfinder.Auth_Service.services.interfaces.JwtService;
 import jakarta.annotation.PostConstruct;
 
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 
 @Service
-public class JwtService {
+public class JwtServiceImpl implements JwtService {
 
 
     @Value("${jwt.keystore.location}")
@@ -62,19 +62,12 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(@NotNull User user) {
+    public String generateToken(@NotNull UserDto userDto) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole());
-        if (user.getRole().equals(Role.ADMIN)) {
-            claims.put("adminId", user.getId());
-        }
-        if (user.getRole().equals(Role.OWNER)) {
-            claims.put("ownerId", user.getId());
-        }
-        if (user.getRole().equals(Role.TENANT)) {
-            claims.put("tenantId", user.getId());
-        }
-        return generateToken(claims, user);
+        claims.put("role", userDto.getRole());
+        claims.put("userId", userDto.getId());
+
+        return generateToken(claims, userDto);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

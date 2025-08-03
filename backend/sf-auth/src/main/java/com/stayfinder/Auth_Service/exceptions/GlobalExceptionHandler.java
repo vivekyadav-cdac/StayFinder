@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     private final Map<String, String> error = new HashMap<>();
 
     @ExceptionHandler(UserAlreadyExistsException.class)
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException ex) {
-        error.put("error", ex.getMessage());
+        error.put("error", "Invalid email or password");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
@@ -31,4 +33,11 @@ public class GlobalExceptionHandler {
         error.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex) {
+        error.put("error", "Unauthenticated");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
 }
