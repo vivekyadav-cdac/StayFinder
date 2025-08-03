@@ -3,9 +3,9 @@ package com.stayfinder.Auth_Service.configuration;
 import java.io.IOException;
 import java.util.Collections;
 
-import com.stayfinder.Auth_Service.services.JwtService;
+import com.stayfinder.Auth_Service.services.implementation.JwtServiceImpl;
+import com.stayfinder.Auth_Service.services.interfaces.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,8 +27,8 @@ import lombok.RequiredArgsConstructor;
 public class
 JwtAuthenticationFilter extends OncePerRequestFilter {
 
-
     private final JwtService jwtService;
+
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -60,15 +60,16 @@ JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        }catch(ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"JWT token expired\"}");
-        } catch(Exception e){
+        } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
         }
+
         filterChain.doFilter(request, response);
 
     }

@@ -1,7 +1,6 @@
 package com.stayfinder.Auth_Service.dto;
 
 
-
 import com.stayfinder.Auth_Service.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
