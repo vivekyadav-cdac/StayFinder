@@ -12,11 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -36,18 +37,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         final String token = header.substring(7);
+
         try {
             Claims claims = jwtUtils.getClaims(token);
             String email = claims.getSubject();
             Role role = jwtUtils.getRole(token);
 
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    email,
-                    null,
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
-            );
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                User userDetails = new User(
+                        email,
+                        "", // No password required here
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()))
+                );
 
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,     // principal
+                                token,           // credentials = raw JWT token (for Feign)
+                                userDetails.getAuthorities()
+                        );
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+
         } catch (Exception e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return;

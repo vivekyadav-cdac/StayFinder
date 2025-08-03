@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.PrivateKey;
 import java.security.PublicKey;
 
 @Component
@@ -24,6 +25,7 @@ public class JwtUtils {
     @Value("${jwt.keystore.alias}")
     private String keyAlias;
 
+    private PrivateKey privateKey;
     private PublicKey publicKey;
 
     @PostConstruct
