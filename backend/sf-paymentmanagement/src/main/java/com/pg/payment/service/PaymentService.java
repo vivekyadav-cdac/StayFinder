@@ -1,24 +1,18 @@
 package com.pg.payment.service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import com.pg.payment.dto.PaymentRequest;
 import com.pg.payment.model.Booking;
 import com.pg.payment.model.Payment;
 import com.pg.payment.model.Room;
 import com.pg.payment.model.Payment.PaymentStatusEnum;
 import com.pg.payment.repository.PaymentRepository;
-import com.razorpay.Order;
-import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PaymentService {
@@ -26,17 +20,27 @@ public class PaymentService {
     @Autowired
     private PaymentRepository repo;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    // Using mocked data now; in real usage, uncomment this and remove hardcoded block
+//    @Autowired
+//    private BookingClient bookingClient;
 
     public List<Payment> getAllHistory() {
         return repo.findAll();
     }
 
     public Payment processPayment(PaymentRequest request, Integer tenantId) {
-//        // Replace with actual booking service URL
-//        String bookingUrl = "http://BOOKING-SERVICE/api/bookings/" + request.getBookingId();
-//        Booking booking = restTemplate.getForObject(bookingUrl, Booking.class);
+        // === Hardcoded Booking object for mocking ===
+        Booking booking = new Booking();
+        booking.setBookingId(request.getBookingId());
+        booking.setTenant_id(tenantId);
+
+        Room room = new Room();
+        room.setRent(5000.0);  // Assume fixed rent
+
+        booking.setRoom(room);
+
+        // === Real implementation with FeignClient ===
+//        Booking booking = bookingClient.getBookingById(request.getBookingId());
 //
 //        if (booking == null) {
 //            throw new RuntimeException("Booking not found.");
@@ -45,19 +49,6 @@ public class PaymentService {
 //        if (!booking.getTenant_id().equals(tenantId)) {
 //            throw new RuntimeException("Unauthorized: You cannot pay for another tenant's booking.");
 //        }
-//
-//        Room room = booking.getRoom();
-//        if (room == null) {
-//            throw new RuntimeException("Room details missing for booking.");
-//        }
-    	 Booking booking = new Booking();
-    	    booking.setBookingId(request.getBookingId());
-    	    booking.setTenant_id(tenantId);
-
-    	    Room room = new Room();
-    	    room.setRent(5000.0);
-
-    	    booking.setRoom(room);
 
         BigDecimal rent = BigDecimal.valueOf(room.getRent());
 
@@ -80,18 +71,6 @@ public class PaymentService {
             throw new RuntimeException("Payment ID not found: " + paymentId);
         }
         repo.deleteById(paymentId);
-    }
-
-    public String createRazorpayOrder(BigDecimal amount) throws RazorpayException {
-        RazorpayClient razorpay = new RazorpayClient("your_key", "your_secret");
-
-        JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", amount.multiply(BigDecimal.valueOf(100))); // in paise
-        orderRequest.put("currency", "INR");
-        orderRequest.put("receipt", "txn_" + UUID.randomUUID());
-
-        Order order = razorpay.orders.create(orderRequest);
-        return order.toJson().toString();
     }
 
     public List<Payment> getPaymentsByTenant(Integer tenantId) {
