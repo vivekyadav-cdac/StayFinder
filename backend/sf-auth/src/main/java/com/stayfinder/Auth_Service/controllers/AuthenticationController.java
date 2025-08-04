@@ -2,8 +2,7 @@ package com.stayfinder.Auth_Service.controllers;
 
 import com.stayfinder.Auth_Service.dto.AuthenticationRequest;
 import com.stayfinder.Auth_Service.dto.AuthenticationResponse;
-import com.stayfinder.Auth_Service.dto.RegisterRequest;
-import com.stayfinder.Auth_Service.services.implementation.AuthenticationServiceImpl;
+import com.stayfinder.Auth_Service.dto.RegisterUserRequestDTO;
 import com.stayfinder.Auth_Service.services.interfaces.AuthenticationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request) {
+            @RequestBody RegisterUserRequestDTO request) {
 
         return ResponseEntity.ok(authService.register(request));
     }
