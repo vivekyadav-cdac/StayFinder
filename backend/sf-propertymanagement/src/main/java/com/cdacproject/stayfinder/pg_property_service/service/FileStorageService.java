@@ -3,28 +3,45 @@ package com.cdacproject.stayfinder.pg_property_service.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 public class FileStorageService {
 
-    private final String UPLOAD_DIR = "uploads/";
+    private final Path uploadDir = Paths.get("uploads");
+
+    public FileStorageService() throws IOException {
+        if (!Files.exists(uploadDir)) {
+            Files.createDirectories(uploadDir);
+        }
+    }
 
     public String saveFile(MultipartFile file) throws IOException {
+        validateFile(file);
+
+        String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        Path filePath = uploadDir.resolve(filename);
+        Files.copy(file.getInputStream(), filePath);
+
+        // Return only filename, URL will be built via Gateway in Mapper
+        return filename;
+    }
+
+    private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("File cannot be empty");
         }
-        Files.createDirectories(Paths.get(UPLOAD_DIR));
 
-        String uniqueName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        Path filePath = Paths.get(UPLOAD_DIR + uniqueName);
-        file.transferTo(filePath.toFile());
+        if (file.getContentType() == null || !file.getContentType().startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed");
+        }
 
-        return "/files/" + uniqueName; 
+        long maxSize = 2 * 1024 * 1024; // 2 MB
+        if (file.getSize() > maxSize) {
+            throw new IllegalArgumentException("File too large (max 2 MB)");
+        }
     }
 }
