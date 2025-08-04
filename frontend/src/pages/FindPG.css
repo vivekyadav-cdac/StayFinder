@@ -1,0 +1,18 @@
+.pg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* ⬅️ Forces 3 columns */
+  gap: 20px;
+  padding: 0 15px;
+}
+
+@media (max-width: 992px) {
+  .pg-grid {
+    grid-template-columns: repeat(2, 1fr); /* Tablets: 2 columns */
+  }
+}
+
+@media (max-width: 576px) {
+  .pg-grid {
+    grid-template-columns: 1fr; /* Mobiles: 1 column */
+  }
+}
