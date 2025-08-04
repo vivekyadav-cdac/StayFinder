@@ -1,200 +1,110 @@
-# 📘 `sf-usermanagement` - API Documentation
+# 🏠 StayFinder
 
-**Microservice** responsible for managing user-related operations in the StayFinder platform.
-
-- **Base URL:** `/api/v1/user`
-- **Version:** v1
-- **Consumes:** `application/json`
-- **Produces:** `application/json`
-- **Security:** JWT-based Authentication (except for `/register`)
+A full-stack web-based PG (Paying Guest) management system that allows **Owners**, **Tenants**, and **Admins** to manage and monitor day-to-day PG operations. Built using microservices with Spring Boot and React.
 
 ---
 
-## 1. ✅ Register New User
+## 📌 Objective
 
-```
-POST /api/v1/user/register
-
-```
-
-### 🔐 Auth Required: ❌ No
-
-### 📥 Request Body
-
-```json
-{
-  "firstName": "John",
-  "lastName": "Doe",
-  "phone": "9876543210",
-  "email": "john@example.com",
-  "password": "securePassword123",
-  "role": "TENANT"
-}
-
-```
-
-### 📤 Response
-
-```json
-{
-  "id": 1,
-  "firstName": "John",
-  "lastName": "Doe",
-  "phone": "9876543210",
-  "email": "john@example.com",
-  "role": "TENANT"
-}
-
-```
-
-### 🔁 Status Codes
-
-- `201 Created` – User successfully registered
-- `400 Bad Request` – Email already exists or validation failed
+To digitize the end-to-end management of PG accommodations — including room listings, bookings, payments, complaints, and communication — for tenants and owners, while providing administrative oversight.
 
 ---
 
-## 2. 📄 Get All Users
+## 🧩 Tech Stack
 
-```
-GET /api/v1/user/users
+### 🔧 Backend
+- **Language**: Java 17+
+- **Framework**: Spring Boot 3.x
+- **Database**: MySQL / PostgreSQL
+- **ORM**: Hibernate (JPA)
+- **Security**: Spring Security + JWT
+- **Build Tool**: Maven
+- **API Style**: RESTful APIs
+- **Containerization**: Docker
 
-```
-
-### 🔐 Auth Required: ✅ Yes (ADMIN)
-
-### 📤 Response
-
-```json
-[
-  {
-    "id": 1,
-    "firstName": "John",
-    "lastName": "Doe",
-    "phone": "9876543210",
-    "email": "john@example.com",
-    "role": "TENANT"
-  }
-]
-
-```
+### 💻 Frontend
+- **Library**: React 18+
+- **Routing**: React Router
+- **Styling**: TailwindCSS / Bootstrap / Material-UI
+- **HTTP Client**: Axios (with JWT Interceptors)
+- **State Management**: Context API / Redux Toolkit (optional)
 
 ---
 
-## 3. 🔍 Get User by Email
+## 👥 User Roles
 
-```
-GET /api/v1/user/email/{email}
-
-```
-
-### 🔐 Auth Required: ✅ Yes (ADMIN, TENANT, OWNER)
-
-### 📤 Response
-
-```json
-{
-  "id": 1,
-  "firstName": "John",
-  "lastName": "Doe",
-  "phone": "9876543210",
-  "email": "john@example.com",
-  "role": "TENANT"
-}
-
-```
+- **Admin**
+- **PG Owner**
+- **Tenant (User)**
 
 ---
 
-## 4. 🔍 Get User by ID
+## 📁 Modules & Features
 
-```
-GET /api/v1/user/{id}
+### 1. 🔐 Authentication & Authorization
+- User Registration (role-based)
+- Login with JWT
+- Role-based Access Control (Admin, Owner, Tenant)
+- Forgot/Reset Password (optional)
 
-```
+### 2. 👤 User Management
+- View/Add/Edit/Delete Users (Admin)
+- View/Edit Profile (All Users)
+- Change Password
 
-### 🔐 Auth Required: ✅ Yes (ADMIN, TENANT, OWNER)
+### 3. 🏠 PG Property Management (Owner)
+- Add/Edit/Delete PGs
+- PG Details: Name, Type, Address, City, State, Pin, Contact Info
+- Room Management (No., Type, Rent, Availability)
+- Upload Room Images
 
----
+### 4. 📆 Booking Management (Tenant)
+- Search PGs by Location, Gender, Budget, etc.
+- View PG Details and Rooms
+- Book Room / Cancel Booking
+- View Booking History
 
-## 5. 📝 Update User by Email
+### 5. 💳 Payment Management
+- Pay Rent Online via Payment Gateway (e.g., Razorpay/Stripe)
+- Generate Invoice/Receipt
+- View Payment History
 
-```
-PUT /api/v1/user/email/{email}
+### 6. 📢 Notice Board
+- Owners post notices to tenants
+- Tenants view announcements
 
-```
+### 7. 🛠 Complaint / Service Request System
+- Tenants raise complaints or requests
+- Admins/Owners manage status (Pending, In Progress, Resolved)
 
-### 🔐 Auth Required: ✅ Yes (TENANT, OWNER)
-
-### 📥 Request Body
-
-```json
-{
-  "firstName": "Updated",
-  "lastName": "Name",
-  "phone": "1234567890",
-  "email": "updated@example.com",
-  "password": "newPassword123",
-  "role": "OWNER"
-}
-
-```
-
----
-
-## 6. 📝 Update User by ID
-
-```
-PUT /api/v1/user/{id}
-
-```
-
-### 🔐 Auth Required: ✅ Yes (TENANT, OWNER)
-
----
-
-## 7. ❌ Delete User by Email
-
-```
-DELETE /api/v1/user/email/{email}
-
-```
-
-### 🔐 Auth Required: ✅ Yes (ADMIN, TENANT, OWNER)
+### 8. 📊 Reports (Admin/Owner)
+- Total Tenants, Rooms, PGs
+- Occupancy Report
+- Payment Report
+- Complaints Summary
 
 ---
 
-## 8. ❌ Delete User by ID
+## ⚙ Non-Functional Requirements
 
-```
-DELETE /api/v1/user/{id}
-
-```
-
-### 🔐 Auth Required: ✅ Yes (ADMIN, TENANT, OWNER)
-
----
-
-## 🛡️ Role-based Access
-
-| Endpoint | ADMIN | TENANT | OWNER |
-| --- | --- | --- | --- |
-| `GET /users` | ✅ | ❌ | ❌ |
-| `GET /email/{email}` | ✅ | ✅ | ✅ |
-| `GET /{id}` | ✅ | ✅ | ✅ |
-| `DELETE /email/{email}` | ✅ | ✅ | ✅ |
-| `DELETE /{id}` | ✅ | ✅ | ✅ |
-| `PUT /email/{email}` | ❌ | ✅ | ✅ |
-| `PUT /{id}` | ❌ | ✅ | ✅ |
-| `POST /register` | ✅ | ✅ | ✅ |
+- JWT-Based Authorization
+- Input Validation (Frontend & Backend)
+- Pagination for List APIs
+- Logging (Backend Logs + Frontend Errors)
+- Optional: Caching, Docker, CI/CD pipeline
 
 ---
 
-## ⚙️ Technologies Used
+## 🔗 Sample API Structure
 
-- Spring Boot
-- Spring Security + JWT
-- PostgreSQL
-- Hibernate / JPA
-- Bean Validation
-- RESTful Design
+| Method | Endpoint                   | Description                 | Access   |
+|--------|----------------------------|-----------------------------|----------|
+| POST   | `/api/auth/register`       | Register user               | Public   |
+| POST   | `/api/auth/login`          | Login with JWT              | Public   |
+| GET    | `/api/pgs`                 | List all PGs                | Tenant   |
+| POST   | `/api/pgs`                 | Create PG                   | Owner    |
+| GET    | `/api/pgs/{id}/rooms`      | Get rooms for a PG          | All      |
+| POST   | `/api/bookings`            | Book a room                 | Tenant   |
+| POST   | `/api/payments`            | Pay rent                    | Tenant   |
+| GET    | `/api/admin/dashboard`     | View platform metrics       | Admin    |
+
