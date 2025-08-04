@@ -1,4 +1,4 @@
-# 🏠 PG Management System
+# 🏠 StayFinder
 
 A full-stack web-based PG (Paying Guest) management system that allows **Owners**, **Tenants**, and **Admins** to manage and monitor day-to-day PG operations. Built using microservices with Spring Boot and React.
 
