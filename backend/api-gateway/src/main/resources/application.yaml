@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: apigateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: sf-auth
+          uri: lb://SF-AUTH
+          predicates:
+            - Path=/api/auth/**
+        - id: sf-usermanagement
+          uri: lb://SF-USERMANAGEMENT
+          predicates:
+            - Path=/api/v1/user/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:9090"
+              - "http://localhost:9091"
+              - "http://localhost:8081"
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+            allowedHeaders:
+              - Content-Type
+              - responseType
+              - Authorization
+            allowCredentials: true
+
+  jwt:
+    keystore:
+      location: classpath:jwt-keystore.jks
+      password: password
+      alias: jwt-key
+
+server:
+  port: 4000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
