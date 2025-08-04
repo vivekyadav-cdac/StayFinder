@@ -17,12 +17,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto implements UserDetails {
+public class UserDTO implements UserDetails {
 
     private Integer id;
     private String firstName;
     private String lastName;
     private String email;
+    private String phone;
     private String password;
     private Role role;
     @Override

@@ -1,14 +1,10 @@
 package com.stayfinder.Auth_Service.services.interfaces;
 
-import com.stayfinder.Auth_Service.dto.UserDto;
+import com.stayfinder.Auth_Service.dto.UserDTO;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -16,7 +12,7 @@ public interface JwtService {
 
     public String extractUsername(String token);
 
-    public String generateToken(@NotNull UserDto userDto);
+    public String generateToken(@NotNull UserDTO userDto);
 
     public boolean isTokenValid(String token, UserDetails userDetails);
 

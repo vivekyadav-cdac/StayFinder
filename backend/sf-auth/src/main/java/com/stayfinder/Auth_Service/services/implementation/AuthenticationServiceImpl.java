@@ -3,8 +3,8 @@ package com.stayfinder.Auth_Service.services.implementation;
 
 import com.stayfinder.Auth_Service.dto.AuthenticationRequest;
 import com.stayfinder.Auth_Service.dto.AuthenticationResponse;
-import com.stayfinder.Auth_Service.dto.RegisterRequest;
-import com.stayfinder.Auth_Service.dto.UserDto;
+import com.stayfinder.Auth_Service.dto.RegisterUserRequestDTO;
+import com.stayfinder.Auth_Service.dto.UserDTO;
 
 import com.stayfinder.Auth_Service.exceptions.UserAlreadyExistsException;
 import com.stayfinder.Auth_Service.feign.UserClient;
@@ -31,13 +31,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserClient userClient;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterUserRequestDTO request) {
 
 
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        UserDto userDto;
+        UserDTO userDto;
         try {
-            userDto = userClient.createUser(request).getBody();
+            userDto = userClient.registerUser(request).getBody();
         }catch(RuntimeException e){
             throw new UserAlreadyExistsException("User Already exist, Please login!! ");
         }
@@ -50,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        UserDto userDto = userClient.getUserByEmail(request.getEmail()).getBody();
+        UserDTO userDto = userClient.getUserByEmail(request.getEmail()).getBody();
         assert userDto != null;
         var jwtToken = jwtServiceImpl.generateToken(userDto);
         return AuthenticationResponse.builder().token(jwtToken).build();

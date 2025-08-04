@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.stayfinder.Auth_Service.dto.UserDto;
+import com.stayfinder.Auth_Service.dto.UserDTO;
 import com.stayfinder.Auth_Service.services.interfaces.JwtService;
 import jakarta.annotation.PostConstruct;
 
@@ -62,7 +62,7 @@ public class JwtServiceImpl implements JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(@NotNull UserDto userDto) {
+    public String generateToken(@NotNull UserDTO userDto) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", userDto.getRole());
         claims.put("userId", userDto.getId());
