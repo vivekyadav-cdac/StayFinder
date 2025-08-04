@@ -2,11 +2,13 @@ package com.stayfinder.sf_usermanagement.service;
 
 import com.stayfinder.sf_usermanagement.dto.RegisterUserRequestDTO;
 import com.stayfinder.sf_usermanagement.dto.UserDTO;
+import com.stayfinder.sf_usermanagement.exception.UserAlreadyExistsException;
 import com.stayfinder.sf_usermanagement.model.User;
 import com.stayfinder.sf_usermanagement.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -114,7 +116,7 @@ public class UserService {
 
     public UserDTO registerUser(RegisterUserRequestDTO request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("User already exists with email: " + request.getEmail());
+            throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
         }
 
         User user = User.builder()

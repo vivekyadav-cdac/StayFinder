@@ -1,7 +1,8 @@
 package com.stayfinder.sf_usermanagement.repositories;
 
 import com.stayfinder.sf_usermanagement.model.User;
-import jakarta.validation.constraints.NotNull;
+
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
