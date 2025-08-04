@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface UserClient {
 
     @GetMapping("/api/v1/user/email/{email}")
-    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email);
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) ;
     @PostMapping("/api/v1/user/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody RegisterUserRequestDTO request) ;
 }
