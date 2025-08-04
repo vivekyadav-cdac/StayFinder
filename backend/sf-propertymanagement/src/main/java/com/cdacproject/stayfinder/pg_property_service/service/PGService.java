@@ -1,76 +1,73 @@
 package com.cdacproject.stayfinder.pg_property_service.service;
 
-import com.cdacproject.stayfinder.pg_property_service.dto.PGResponseDto;
-import com.cdacproject.stayfinder.pg_property_service.dto.RoomResponseDto;
+import com.cdacproject.stayfinder.pg_property_service.exception.ResourceNotFoundException;
 import com.cdacproject.stayfinder.pg_property_service.model.PG;
 import com.cdacproject.stayfinder.pg_property_service.repository.PGRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class PGService {
 
-    @Autowired
-    private PGRepository pgRepository;
+    private static final Logger log = LoggerFactory.getLogger(PGService.class);
 
-    public PG createPG(PG pg) {
-        return pgRepository.save(pg);
+    private final PGRepository pgRepository;
+
+    public PGService(PGRepository pgRepository) {
+        this.pgRepository = pgRepository;
     }
 
-    // ✅ Pagination + filtering
-    public Page<PGResponseDto> getAllPGs(String city, Pageable pageable) {
-        Page<PG> page;
-        if (city != null && !city.isEmpty()) {
-            page = pgRepository.findByCity(city, pageable);
-        } else {
-            page = pgRepository.findAll(pageable);
-        }
-        return page.map(this::toResponseDto);
+    /**  Create PG */
+    @Transactional
+    public PG createPG(PG pg, Long ownerId) {
+        pg.setOwnerId(ownerId);
+        PG saved = pgRepository.save(pg);
+        log.info("PG created with ID {} by Owner {}", saved.getId(), ownerId);
+        return saved;
     }
 
-    public Optional<PG> getPGById(Long id) {
-        return pgRepository.findById(id);
+    /**  Get all PGs (with optional city filter) */
+    public Page<PG> getAllPGs(String city, Pageable pageable) {
+        Page<PG> page = (city != null && !city.isEmpty())
+                ? pgRepository.findByCity(city, pageable)
+                : pgRepository.findAll(pageable);
+
+        log.debug("Fetched {} PGs (city filter: {})", page.getTotalElements(), city);
+        return page;
     }
 
-    public void deletePG(Long id) {
-        pgRepository.deleteById(id);
-    }
-
-    public java.util.List<PG> getPGsByOwnerId(Long ownerId) {
+    /**  Get PGs by owner */
+    public List<PG> getPGsByOwnerId(Long ownerId) {
+        log.debug("Fetching PGs for ownerId {}", ownerId);
         return pgRepository.findByOwnerId(ownerId);
     }
 
-   
-    public PGResponseDto toResponseDto(PG pg) {
-        PGResponseDto dto = new PGResponseDto();
-        dto.setId(pg.getId());
-        dto.setName(pg.getName());
-        dto.setType(pg.getType());
-        dto.setAddress(pg.getAddress());
-        dto.setCity(pg.getCity());
-        dto.setState(pg.getState());
-        dto.setPin(pg.getPin());
-        dto.setContact(pg.getContact());
-        dto.setOwnerId(pg.getOwnerId());
-        dto.setImageUrl(pg.getImageUrl());
+    /**  Get PG by ID */
+    public Optional<PG> getPGById(Long id) {
+        log.debug("Fetching PG with ID {}", id);
+        return pgRepository.findById(id);
+    }
 
-        if (pg.getRooms() != null) {
-            dto.setRooms(pg.getRooms().stream().map(room -> {
-                RoomResponseDto rDto = new RoomResponseDto();
-                rDto.setId(room.getId());
-                rDto.setNumber(room.getNumber());
-                rDto.setType(room.getType());
-                rDto.setRent(room.getRent());
-                rDto.setAvailable(room.isAvailable());
-                rDto.setImageUrl(room.getImageUrl());
-                return rDto;
-            }).collect(Collectors.toList()));
+    /**  Delete PG (only if owned by user) */
+    @Transactional
+    public void deletePG(Long id, Long ownerId) {
+        PG pg = pgRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("PG not found with id: " + id));
+
+        if (!pg.getOwnerId().equals(ownerId)) {
+            log.error("Unauthorized delete attempt for PG {} by user {}", id, ownerId);
+            throw new ResourceNotFoundException("You do not own this PG");
         }
-        return dto;
+
+        pgRepository.delete(pg);
+        log.warn("PG deleted with ID {} by Owner {}", id, ownerId);
     }
 }

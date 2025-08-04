@@ -2,8 +2,20 @@ package com.cdacproject.stayfinder.pg_property_service.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "rooms", indexes = {
+        @Index(name = "idx_room_pg", columnList = "pg_id"),
+        @Index(name = "idx_room_type", columnList = "type")
+})
 public class Room {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,9 +27,17 @@ public class Room {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pg_id")
+    @JoinColumn(name = "pg_id", nullable = false)
     @JsonBackReference
     private PG pg;
+
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     public Long getId() {
         return id;

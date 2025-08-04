@@ -1,14 +1,14 @@
 package com.cdacproject.stayfinder.pg_property_service.repository;
 
-import java.util.List;
-
+import com.cdacproject.stayfinder.pg_property_service.model.PG;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.cdacproject.stayfinder.pg_property_service.model.PG;
+import java.util.List;
 
 public interface PGRepository extends JpaRepository<PG, Long> {
-    Page<PG> findByCity(String city, Pageable pageable);
     List<PG> findByOwnerId(Long ownerId);
+    List<PG> findByCity(String city);
+    Page<PG> findByCity(String city, Pageable pageable); // Paginated for API
 }
