@@ -1,11 +1,13 @@
 package com.stayfinder.booking.dto;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
-	private Long id;
-	private String name;
-	private String email;
-	private String role;
+    private Integer id;
+    private String name;
+    private String email;
+    private String role;
 }
