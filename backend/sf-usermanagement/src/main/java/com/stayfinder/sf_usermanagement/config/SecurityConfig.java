@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Publicly accessible register endpoint
-                        .requestMatchers("/api/v1/user/register").permitAll()
+                        .requestMatchers("/api/v1/user/register","/api/v1/user/email/**").permitAll()
 
                         // Admin access
                         .requestMatchers("/api/v1/user/users").hasRole("ADMIN")
