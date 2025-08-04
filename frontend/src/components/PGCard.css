@@ -1,0 +1,85 @@
+.pg-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  width: 280px;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+.pg-image-container {
+  position: relative;
+}
+
+.pg-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.pg-fav-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  padding: 6px 9px;
+  font-size: 18px;
+  color: #666;
+  cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
+.pg-body {
+  padding: 16px;
+}
+
+.pg-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  margin-bottom: 6px;
+}
+
+.pg-subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.pg-gender {
+  color: #00B5C2;
+  font-weight: 500;
+}
+
+.pg-price-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.pg-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #222;
+}
+
+.pg-discount {
+  font-size: 12px;
+  background-color: #D2F3F3;
+  color: #00B5C2;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.pg-distance {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #444;
+  gap: 6px;
+}
