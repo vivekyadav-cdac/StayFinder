@@ -28,13 +28,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
-
     private final UserClient userClient;
 
     public AuthenticationResponse register(RegisterUserRequestDTO request) {
 
-
-        request.setPassword(passwordEncoder.encode(request.getPassword()));
         UserDTO userDto;
         try {
             userDto = userClient.registerUser(request).getBody();
