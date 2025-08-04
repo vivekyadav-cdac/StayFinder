@@ -1,11 +1,22 @@
 package com.cdacproject.stayfinder.pg_property_service.repository;
 
+import com.cdacproject.stayfinder.pg_property_service.model.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.cdacproject.stayfinder.pg_property_service.model.Room;
+import java.util.List;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
-    Page<Room> findByPgId(Long pgId, Pageable pageable);
+    List<Room> findByPgId(Long pgId);  // For internal use
+    
+    Page<Room> findByPgId(Long pgId, Pageable pageable); // For paginated API
+
+    Page<Room> findByPgIdAndAvailable(Long pgId, Boolean available, Pageable pageable);
+
+    Page<Room> findByPgIdAndAvailableAndRentBetween(Long pgId, Boolean available, Double minRent, Double maxRent, Pageable pageable);
+    
+    Page<Room> findByPgIdAndRentBetween(Long pgId, Double minRent, Double maxRent, Pageable pageable);
+
 }
+

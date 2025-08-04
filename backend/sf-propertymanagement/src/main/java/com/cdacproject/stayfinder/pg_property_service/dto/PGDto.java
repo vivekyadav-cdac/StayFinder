@@ -1,9 +1,9 @@
 package com.cdacproject.stayfinder.pg_property_service.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class PGDto {
+
     private Long id;
 
     @NotBlank
@@ -27,8 +27,9 @@ public class PGDto {
     @NotBlank
     private String contact;
 
-    @NotNull
-    private Long ownerId;
+    private Double latitude;
+
+    private Double longitude;
 
     public Long getId() {
         return id;
@@ -94,11 +95,19 @@ public class PGDto {
         this.contact = contact;
     }
 
-    public Long getOwnerId() {
-        return ownerId;
+    public Double getLatitude() {
+        return latitude;
     }
 
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 }

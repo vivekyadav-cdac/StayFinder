@@ -1,8 +1,10 @@
 package com.cdacproject.stayfinder.pg_property_service.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class PGResponseDto {
+
     private Long id;
     private String name;
     private String type;
@@ -12,98 +14,112 @@ public class PGResponseDto {
     private String pin;
     private String contact;
     private Long ownerId;
-    private String imageUrl; // ✅ include image
+    private String imageUrl;
+    private List<RoomResponseDto> rooms;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    private List<RoomResponseDto> rooms; // ✅ nested rooms
+    public Long getId() {
+        return id;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public String getAddress() {
-		return address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public String getPin() {
+        return pin;
+    }
 
-	public String getPin() {
-		return pin;
-	}
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
 
-	public void setPin(String pin) {
-		this.pin = pin;
-	}
+    public String getContact() {
+        return contact;
+    }
 
-	public String getContact() {
-		return contact;
-	}
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
 
-	public void setContact(String contact) {
-		this.contact = contact;
-	}
+    public Long getOwnerId() {
+        return ownerId;
+    }
 
-	public Long getOwnerId() {
-		return ownerId;
-	}
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
 
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
-	}
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public List<RoomResponseDto> getRooms() {
+        return rooms;
+    }
 
-	public List<RoomResponseDto> getRooms() {
-		return rooms;
-	}
+    public void setRooms(List<RoomResponseDto> rooms) {
+        this.rooms = rooms;
+    }
 
-	public void setRooms(List<RoomResponseDto> rooms) {
-		this.rooms = rooms;
-	}
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
-

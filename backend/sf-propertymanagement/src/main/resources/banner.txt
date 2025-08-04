@@ -1,0 +1,5 @@
+===============================
+ StayFinder PG Property Service
+ Version: ${application.version}
+ Active Profile: ${spring.profiles.active}
+===============================

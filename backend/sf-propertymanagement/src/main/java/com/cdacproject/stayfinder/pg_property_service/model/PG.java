@@ -2,10 +2,24 @@ package com.cdacproject.stayfinder.pg_property_service.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(
+    name = "pgs",
+    indexes = {
+        @Index(name = "idx_pg_city", columnList = "city"),
+        @Index(name = "idx_pg_owner", columnList = "ownerId")
+    }
+)
 public class PG {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -13,12 +27,33 @@ public class PG {
     private String name;
     private String type;
     private String address;
+
+    @Column(nullable = false)
     private String city;
+
     private String state;
     private String pin;
     private String contact;
+
+    @Column(nullable = false)
     private Long ownerId;
-    private String imageUrl; 
+
+    private String imageUrl;
+
+    @CreatedDate
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Column(precision = 9, scale = 6)
+    private Double latitude;
+
+    @Column(precision = 9, scale = 6)
+    private Double longitude;
+
 
     @OneToMany(mappedBy = "pg", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
@@ -111,5 +146,22 @@ public class PG {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
-    
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+
 }

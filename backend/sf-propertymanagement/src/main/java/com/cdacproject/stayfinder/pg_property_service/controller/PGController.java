@@ -2,13 +2,21 @@ package com.cdacproject.stayfinder.pg_property_service.controller;
 
 import com.cdacproject.stayfinder.pg_property_service.dto.PGDto;
 import com.cdacproject.stayfinder.pg_property_service.dto.PGResponseDto;
+import com.cdacproject.stayfinder.pg_property_service.exception.ErrorResponse;
+import com.cdacproject.stayfinder.pg_property_service.exception.ResourceNotFoundException;
+import com.cdacproject.stayfinder.pg_property_service.mapper.PGMapper;
 import com.cdacproject.stayfinder.pg_property_service.model.PG;
 import com.cdacproject.stayfinder.pg_property_service.service.FileStorageService;
 import com.cdacproject.stayfinder.pg_property_service.service.PGService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,66 +27,79 @@ import java.io.IOException;
 @RequestMapping("/api/pgs")
 public class PGController {
 
-    @Autowired private PGService pgService;
-    @Autowired private FileStorageService fileStorage;
+    private final PGService pgService;
+    private final FileStorageService fileStorage;
+    private final PGMapper pgMapper;
 
-    /**
-     * Create PG with optional image upload (OWNER only)
-     */
+    @Value("${gateway.base-url}")
+    private String gatewayUrl;
+
+    private static final Logger log = LoggerFactory.getLogger(PGController.class);
+
+    public PGController(PGService pgService, FileStorageService fileStorage, PGMapper pgMapper) {
+        this.pgService = pgService;
+        this.fileStorage = fileStorage;
+        this.pgMapper = pgMapper;
+    }
+
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping(consumes = {"multipart/form-data"})
-    public PGResponseDto create(@RequestPart("pg") @Valid PGDto pgDto,
-                                @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+    public ResponseEntity<?> create(@RequestPart("pg") @Valid PGDto pgDto,
+                                    @RequestPart(value = "image", required = false) MultipartFile image,
+                                    HttpServletRequest request) throws IOException {
 
-        PG pg = new PG();
-        pg.setName(pgDto.getName());
-        pg.setType(pgDto.getType());
-        pg.setAddress(pgDto.getAddress());
-        pg.setCity(pgDto.getCity());
-        pg.setState(pgDto.getState());
-        pg.setPin(pgDto.getPin());
-        pg.setContact(pgDto.getContact());
-        pg.setOwnerId(pgDto.getOwnerId());
+        String userIdHeader = request.getHeader("X-User-Id");
+        if (userIdHeader == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(401, "Missing user ID header", request.getRequestURI()));
+        }
+        Long ownerId = Long.valueOf(userIdHeader);
+
+        log.info("Create PG requested by User ID: {}", ownerId);
+
+        PG pg = pgMapper.toEntity(pgDto);
 
         if (image != null) {
-            String url = fileStorage.saveFile(image);
-            pg.setImageUrl(url);
+            String filename = fileStorage.saveFile(image);
+            pg.setImageUrl(filename);
         }
 
-        PG saved = pgService.createPG(pg);
-        return pgService.toResponseDto(saved); 
+        PG saved = pgService.createPG(pg, ownerId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(pgMapper.toResponseDto(saved, gatewayUrl));
     }
 
-    /**
-     * Get all PGs with pagination & optional city filter (OWNER & USER)
-     */
     @PreAuthorize("hasAnyRole('OWNER','USER')")
     @GetMapping
-    public Page<PGResponseDto> getAll(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size,
-                                      @RequestParam(required = false) String city) {
-
+    public ResponseEntity<Page<PGResponseDto>> getAll(@RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size,
+                                                      @RequestParam(required = false) String city) {
         PageRequest pageable = PageRequest.of(page, size);
-        return pgService.getAllPGs(city, pageable); 
+        Page<PGResponseDto> result = pgService.getAllPGs(city, pageable)
+                .map(pg -> pgMapper.toResponseDto(pg, gatewayUrl));
+        return ResponseEntity.ok(result);
     }
 
-    /**
-     * Get PG by ID (OWNER & USER)
-     */
     @PreAuthorize("hasAnyRole('OWNER','USER')")
     @GetMapping("/{id}")
-    public PGResponseDto getById(@PathVariable Long id) {
+    public ResponseEntity<PGResponseDto> getById(@PathVariable Long id) {
         PG pg = pgService.getPGById(id)
-                .orElseThrow(() -> new RuntimeException("PG not found"));
-        return pgService.toResponseDto(pg); 
+                .orElseThrow(() -> new ResourceNotFoundException("PG not found with id: " + id));
+        return ResponseEntity.ok(pgMapper.toResponseDto(pg, gatewayUrl));
     }
 
-    /**
-     * Delete PG (OWNER only)
-     */
     @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        pgService.deletePG(id);
+    public ResponseEntity<?> delete(@PathVariable Long id, HttpServletRequest request) {
+        String userIdHeader = request.getHeader("X-User-Id");
+        if (userIdHeader == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse(401, "Missing user ID header", request.getRequestURI()));
+        }
+        Long ownerId = Long.valueOf(userIdHeader);
+
+        log.warn("User {} requested delete PG with ID {}", ownerId, id);
+        pgService.deletePG(id, ownerId);
+        return ResponseEntity.noContent().build();
     }
 }
