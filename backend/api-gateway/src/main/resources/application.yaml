@@ -13,6 +13,14 @@ spring:
           uri: lb://SF-USERMANAGEMENT
           predicates:
             - Path=/api/v1/user/**
+        - id: sf-bookingmanagement
+          uri: lb://SF-BOOKINGMANAGEMENT
+          predicates:
+            - Path=/api/bookings/**
+        - id: sf-property-service
+          uri: lb://SF-PROPERTY-SERVICE
+          predicates:
+            - Path=/api/pgs/**,/api/pgs/{pgId}/rooms/**
       globalcors:
         corsConfigurations:
           '[/**]':
