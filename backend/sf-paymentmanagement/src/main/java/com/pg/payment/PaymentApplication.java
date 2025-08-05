@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication(scanBasePackages = "com.pg.payment")
 @EnableJpaRepositories(basePackages = "com.pg.payment.repository")
 @EntityScan(basePackages = "com.pg.payment.model")
-//@EnableFeignClients 
-public class PaymentApplication {
+class PaymentApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PaymentApplication.class, args);
