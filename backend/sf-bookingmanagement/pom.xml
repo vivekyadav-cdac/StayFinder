@@ -103,6 +103,11 @@
 							<artifactId>lombok</artifactId>
 						</path>
 					</annotationProcessorPaths>
+					<basedir/>
+					<buildDirectory/>
+					<mainOutputDirectory/>
+					<outputDirectory/>
+					<projectArtifact/>
 				</configuration>
 			</plugin>
 			<plugin>
