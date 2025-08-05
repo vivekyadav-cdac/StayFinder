@@ -25,7 +25,6 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - "http://localhost:9090"
               - "http://localhost:9091"
               - "http://localhost:8081"
             allowedMethods:
@@ -46,7 +45,7 @@ spring:
       alias: jwt-key
 
 server:
-  port: 4000
+  port: 8000
 
 eureka:
   client:

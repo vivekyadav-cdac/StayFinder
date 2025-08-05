@@ -21,7 +21,7 @@ import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class  JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
 
