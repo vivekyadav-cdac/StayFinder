@@ -1,5 +1,6 @@
 package com.pg.payment.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
@@ -18,11 +19,16 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private int pg_id;
+    @Column(name = "id")
+    private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "pg_id")
+    private PG pg;
+    
     private String number;
     private String type;
-    private double rent;
+    private BigDecimal rent;
     @Column(name = "is_available")
     private boolean available;
     
