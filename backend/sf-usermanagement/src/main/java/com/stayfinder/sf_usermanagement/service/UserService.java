@@ -135,4 +135,31 @@ public class UserService {
         return responseDto;
     }
 
+    public List<UserDTO> registerUsersInBulk(List<RegisterUserRequestDTO> requests) {
+        List<UserDTO> registeredUsers = new ArrayList<>();
+
+        for (RegisterUserRequestDTO request : requests) {
+            if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+                throw new UserAlreadyExistsException("User already exists with email: " + request.getEmail());
+            }
+
+            User user = User.builder()
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .phone(request.getPhone())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .role(request.getRole())
+                    .build();
+
+            User savedUser = userRepository.save(user);
+
+            UserDTO responseDto = new UserDTO();
+            BeanUtils.copyProperties(savedUser, responseDto);
+            registeredUsers.add(responseDto);
+        }
+
+        return registeredUsers;
+    }
+
 }
