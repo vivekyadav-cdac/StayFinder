@@ -3,9 +3,14 @@ server:
   servlet:
     context-path: /api/bookings
 
+
 spring:
   application:
     name: sf-bookingmanagement
+  security:
+    user:
+      name: disabled
+      password: disabled
 
   datasource:
     url: jdbc:postgresql://ep-odd-silence-a148ir45-pooler.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require

@@ -27,7 +27,12 @@
             return http
                     .csrf(ServerHttpSecurity.CsrfSpec::disable)
                     .authorizeExchange(exchanges -> exchanges
-                            .pathMatchers("/api/auth/**","/api/v1/user/**").permitAll()
+                            .pathMatchers("/api/auth/**",
+                                        "/api/v1/user/**",
+                                        "/api/bookings/**",
+                                    "/api/pgs/**",
+                                    "/api/pgs/{pgId}/rooms/**",
+                                    "/api/payments").permitAll()
                             .anyExchange().authenticated()
                     )
                     .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
