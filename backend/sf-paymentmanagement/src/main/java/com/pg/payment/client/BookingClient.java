@@ -6,9 +6,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.pg.payment.model.Booking;
 
 
-@FeignClient(name = "booking-service", url = "http://dummy-booking-service.com") 
-public interface BookingClient {
 
-    @GetMapping("/api/bookings/{id}")
-    Booking getBookingById(@PathVariable("id") Integer bookingId);
-}
+

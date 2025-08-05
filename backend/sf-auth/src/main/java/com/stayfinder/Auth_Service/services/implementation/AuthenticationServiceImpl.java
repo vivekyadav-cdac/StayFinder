@@ -47,7 +47,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        UserDTO userDto = userClient.getUserByEmail(request.getEmail()).getBody();
+        UserDTO userDto = userClient.userLogin(request.getEmail()).getBody();
         assert userDto != null;
         var jwtToken = jwtServiceImpl.generateToken(userDto);
         return AuthenticationResponse.builder().token(jwtToken).build();

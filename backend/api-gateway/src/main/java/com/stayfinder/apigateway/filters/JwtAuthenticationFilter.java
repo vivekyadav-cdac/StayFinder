@@ -1,10 +1,13 @@
 package com.stayfinder.apigateway.filters;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.core.Ordered;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,13 +19,13 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-
 import java.security.KeyStore;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 
 @Component
-public class JwtAuthenticationFilter implements WebFilter {
+public class JwtAuthenticationFilter implements WebFilter, Ordered {
+
     @Value("${spring.jwt.keystore.location}")
     private String keystoreLocation;
 
@@ -38,25 +41,24 @@ public class JwtAuthenticationFilter implements WebFilter {
     public void loadPublicKey() throws Exception {
         KeyStore keyStore = KeyStore.getInstance("JKS");
         keyStore.load(new ClassPathResource(keystoreLocation.replace("classpath:", "")).getInputStream(), keystorePassword.toCharArray());
-
         Certificate cert = keyStore.getCertificate(keystoreAlias);
         this.publicKey = cert.getPublicKey();
     }
 
-
     @Override
-    public @NotNull Mono<Void> filter(@NotNull ServerWebExchange exchange, @NotNull WebFilterChain chain) {
+    public Mono<Void> filter(@NotNull ServerWebExchange exchange, @NotNull WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
+        String path = request.getURI().getPath();
 
-        // Skip auth for login/register paths
-        if (request.getURI().getPath().contains("/api/auth")) {
+        // Skip auth endpoints
+        if (path.startsWith("/api/auth")) {
             return chain.filter(exchange);
         }
 
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
         if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            return unauthorized(exchange, "Missing or invalid Authorization header");
         }
 
         String token = authHeader.substring(7);
@@ -71,15 +73,31 @@ public class JwtAuthenticationFilter implements WebFilter {
             ServerHttpRequest mutatedRequest = request.mutate()
                     .header("X-User-Email", claims.getSubject())
                     .header("X-User-Role", claims.get("role", String.class))
-                    .header("X-User-Id",claims.get("userId",String.class))
+                    .header("X-User-Id", String.valueOf(claims.get("userId", Integer.class)))
                     .build();
 
-            return chain.filter(exchange.mutate().request(mutatedRequest).build());
+            ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+            return chain.filter(mutatedExchange);
 
+        } catch (ExpiredJwtException e) {
+            return unauthorized(exchange, "JWT token expired");
         } catch (Exception e) {
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            return exchange.getResponse().setComplete();
+            return unauthorized(exchange, "Invalid JWT token");
         }
     }
 
+    private Mono<Void> unauthorized(ServerWebExchange exchange, String message) {
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        exchange.getResponse().getHeaders().add("Content-Type", "application/json");
+        byte[] bytes = ("{\"error\": \"" + message + "\"}").getBytes();
+        return exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+                .bufferFactory().wrap(bytes)));
+    }
+
+    @Override
+    public int getOrder() {
+        // Order is important - make sure this runs early but after core filters
+        return -10;
+    }
 }
+

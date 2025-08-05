@@ -1,7 +1,10 @@
 spring:
   application:
-    name: sf-usermanagement
-
+    name: SF-USERMANAGEMENT
+  security:
+    user:
+      name: disabled
+      password: disabled
   datasource:
     url: jdbc:postgresql://localhost:5432/usermanagement
     username: postgres
@@ -17,18 +20,24 @@ spring:
         hbm2ddl:
           auto: none
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-
+  instance:
+    prefer-ip-address: true
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
 server:
   port: 8081
 
-jwt:
-  keystore:
-    location: classpath:jwt-keystore.jks
-    password: password
-    alias: jwt-key

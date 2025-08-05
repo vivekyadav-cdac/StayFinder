@@ -23,6 +23,16 @@ public class UserController {
         UserDTO createdUser = userService.registerUser(request);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
+    @GetMapping("/login/{email}")
+    public ResponseEntity<UserDTO> userLogin(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'TENANT', 'OWNER')")
+    @GetMapping("/email/{email}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
+    }
 
     @PostMapping("/register/bulk")
     public ResponseEntity<List<UserDTO>> registerMultipleUsers(@RequestBody List<RegisterUserRequestDTO> requests) {
@@ -44,10 +54,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(userService.getUserByEmail(email));
-    }
+
 
     @PreAuthorize("hasAnyRole('TENANT','OWNER')")
     @PutMapping("/email/{email}")
