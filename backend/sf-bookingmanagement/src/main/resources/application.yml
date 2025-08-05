@@ -1,26 +1,50 @@
 server:
-  port: 8082
+  port: 8083
+  servlet:
+    context-path: /api/bookings
 
 spring:
   application:
-    name: booking-service
+    name: sf-bookingmanagement
+
   datasource:
-    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:5432/postgres
-    username: postgres.dupmnozhinscfkaenvev
-    password: YP!sn4qU@J6!NF-
+    url: jdbc:postgresql://ep-odd-silence-a148ir45-pooler.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_StK6vgYH1nJQ
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        hbm2ddl:
-          auto: none
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
   jackson:
-    time-zone: UTC
     serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
+      write-dates-as-timestamps: false
+
   cloud:
-    compatibility-verifier:
-      enabled: false
+    openfeign:
+      client:
+        config:
+          default:
+            loggerLevel: full
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+logging:
+  level:
+    root: INFO
+    com.cdacproject.stayfinder: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
