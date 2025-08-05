@@ -1,0 +1,12 @@
+package com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.service;
+
+import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.BookingResponse;
+import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.CreateBookingRequest;
+
+import java.util.List;
+
+public interface BookingService {
+    BookingResponse createBooking(CreateBookingRequest request, Long tenantId);
+    void cancelBooking(Long bookingId, Long tenantId);
+    List<BookingResponse> getBookingsByTenant(Long tenantId);
+}

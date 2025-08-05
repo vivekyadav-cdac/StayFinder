@@ -1,9 +1,12 @@
 package com.pg.payment.controller;
 
 import com.pg.payment.dto.PaymentRequest;
+import com.pg.payment.dto.RazorpayOrderRequest;
+import com.pg.payment.dto.RazorpayOrderResponse;
 import com.pg.payment.model.Payment;
 
 import com.pg.payment.service.PaymentService;
+import com.razorpay.RazorpayException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -13,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
+@CrossOrigin(origins = "http://localhost:3000")
 public class PaymentController {
 
     @Autowired
@@ -24,26 +28,26 @@ public class PaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request, HttpServletRequest httpRequest) {
-    	Integer tenantId = 200;
-        return new ResponseEntity<>(paymentService.processPayment(request, tenantId), HttpStatus.CREATED);
+    public ResponseEntity<Payment> makePayment(@RequestBody PaymentRequest request, HttpServletRequest httpRequest,
+                                               @RequestHeader("X-Tenant-Id") Integer tenant_id) {
+        System.out.println("tenant_id: " + tenant_id);
+        System.out.println("Received Request to make paymemt: " + request);
+        return new ResponseEntity<>(paymentService.processPayment(request, tenant_id), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/razorpay/order")
+    public ResponseEntity<RazorpayOrderResponse> createOrder(@RequestBody RazorpayOrderRequest request,
+                                                            @RequestHeader("X-Tenant-Id") Integer tenant_id) throws Exception{
+        System.out.println("tenant_id: " + tenant_id);
+        System.out.println("Received Razorpay Order Request: " + request);
+
+        return ResponseEntity.ok(paymentService.createRazorpayOrder(request));
+
     }
 
     @GetMapping("/history/{bookingId}")
     public ResponseEntity<List<Payment>> getHistoryByBookingId(@PathVariable Integer bookingId) {
         return ResponseEntity.ok(paymentService.getHistoryByBookingId(bookingId));
-    }
-
-//    @DeleteMapping("/delete/{paymentId}")
-//    public ResponseEntity<String> deletePayment(@PathVariable Integer paymentId) {
-//        paymentService.deletePayment(paymentId);
-//        return ResponseEntity.ok("Payment deleted successfully with ID: " + paymentId);
-//    }
-
-    @PostMapping("/razorpay/webhook")
-    public ResponseEntity<String> razorpayWebhook(@RequestBody String response) {
-        // TODO: Validate Razorpay signature and update payment status
-        return ResponseEntity.ok("Webhook received and processed.");
     }
 
     @GetMapping("/tenant/{tenantId}")

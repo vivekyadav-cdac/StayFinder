@@ -48,10 +48,10 @@ public class PG {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(precision = 9, scale = 6)
+    @Column
     private Double latitude;
 
-    @Column(precision = 9, scale = 6)
+    @Column
     private Double longitude;
 
 
