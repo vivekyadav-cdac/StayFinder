@@ -24,6 +24,12 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
+    @PostMapping("/register/bulk")
+    public ResponseEntity<List<UserDTO>> registerMultipleUsers(@RequestBody List<RegisterUserRequestDTO> requests) {
+        List<UserDTO> registeredUsers = userService.registerUsersInBulk(requests);
+        return new ResponseEntity<>(registeredUsers, HttpStatus.CREATED);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUser() {

@@ -71,6 +71,7 @@ public class JwtAuthenticationFilter implements WebFilter {
             ServerHttpRequest mutatedRequest = request.mutate()
                     .header("X-User-Email", claims.getSubject())
                     .header("X-User-Role", claims.get("role", String.class))
+                    .header("X-User-Id",claims.get("userId",String.class))
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());

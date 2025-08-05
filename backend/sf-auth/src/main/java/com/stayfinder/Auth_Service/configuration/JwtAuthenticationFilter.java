@@ -69,7 +69,6 @@ JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
         }
-
         filterChain.doFilter(request, response);
 
     }
