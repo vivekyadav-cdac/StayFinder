@@ -65,6 +65,8 @@ public class RoomController {
             ObjectMapper mapper = new ObjectMapper();
             RoomDto roomDto = mapper.readValue(roomJson, RoomDto.class);
 
+            roomDto.setPgId(pgId);
+
             log.debug("RoomDto parsed: {}", roomDto);
 
             Room room = roomMapper.toEntity(roomDto);
@@ -139,6 +141,16 @@ public class RoomController {
         return ResponseEntity.ok(responseDto);
     }
 
+    // RoomController.java
+    @PutMapping("/{roomId}/availability")
+    public ResponseEntity<Void> updateRoomAvailability(
+            @PathVariable Long pgId,
+            @PathVariable Long roomId,
+            @RequestParam boolean available
+    ) {
+        roomService.updateAvailability(pgId, roomId, available);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

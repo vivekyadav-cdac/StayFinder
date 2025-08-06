@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -87,4 +86,15 @@ public class RoomService {
     public Optional<Room> getRoomByPgIdAndRoomId(Long pgId, Long roomId) {
         return roomRepository.findByIdAndPgId(roomId, pgId);
     }
+
+    @Transactional
+    public void updateAvailability(Long pgId, Long roomId, boolean available) {
+        Room room = roomRepository.findByIdAndPgId(roomId, pgId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found"));
+
+        room.setAvailable(available);
+        roomRepository.save(room);
+    }
+
+
 }

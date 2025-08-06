@@ -8,8 +8,9 @@ import com.cdacproject.stayfinder.pg_property_service.mapper.PGMapper;
 import com.cdacproject.stayfinder.pg_property_service.model.PG;
 import com.cdacproject.stayfinder.pg_property_service.service.FileStorageService;
 import com.cdacproject.stayfinder.pg_property_service.service.PGService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import jakarta.validation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/pgs")
@@ -42,9 +45,8 @@ public class PGController {
         this.pgMapper = pgMapper;
     }
 
-    @PreAuthorize("hasRole('OWNER')")
     @PostMapping(consumes = {"multipart/form-data"})
-    public ResponseEntity<?> create(@RequestPart("pg") @Valid PGDto pgDto,
+    public ResponseEntity<?> create(@RequestPart("pg") String pgJson,
                                     @RequestPart(value = "image", required = false) MultipartFile image,
                                     HttpServletRequest request) throws IOException {
 
@@ -54,12 +56,33 @@ public class PGController {
                     .body(new ErrorResponse(401, "Missing user ID header", request.getRequestURI()));
         }
 
+        ObjectMapper mapper = new ObjectMapper();
+        PGDto pgDto = mapper.readValue(pgJson, PGDto.class);
+
+        // Optional: Perform validation manually
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<PGDto>> violations = validator.validate(pgDto);
+        if (!violations.isEmpty()) {
+            String errorMessages = violations.stream()
+                    .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, errorMessages, request.getRequestURI()));
+        }
+
         Long ownerId = Long.valueOf(userIdHeader);
         log.info("Create PG requested by User ID: {}", ownerId);
 
-        PG pg = pgMapper.toEntity(pgDto);
-
-
+        PG pg = new PG();
+        pg.setName(pgDto.getName());
+        pg.setType(pgDto.getType());
+        pg.setAddress(pgDto.getAddress());
+        pg.setCity(pgDto.getCity());
+        pg.setState(pgDto.getState());
+        pg.setPin(pgDto.getPin());
+        pg.setContact(pgDto.getContact());
+        pg.setLatitude(pgDto.getLatitude());
+        pg.setLongitude(pgDto.getLongitude());
         pg.setOwnerId(ownerId);
 
         if (image != null) {
@@ -68,9 +91,28 @@ public class PGController {
         }
 
         PG saved = pgService.createPG(pg, ownerId);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(pgMapper.toResponseDto(saved, gatewayUrl));
+
+        PGResponseDto response = new PGResponseDto();
+        response.setId(saved.getId());
+        response.setName(saved.getName());
+        response.setType(saved.getType());
+        response.setAddress(saved.getAddress());
+        response.setCity(saved.getCity());
+        response.setState(saved.getState());
+        response.setPin(saved.getPin());
+        response.setContact(saved.getContact());
+        response.setOwnerId(saved.getOwnerId());
+        response.setLatitude(saved.getLatitude());
+        response.setLongitude(saved.getLongitude());
+        response.setCreatedAt(saved.getCreatedAt());
+        response.setUpdatedAt(saved.getUpdatedAt());
+        if (saved.getImageUrl() != null) {
+            response.setImageUrl(gatewayUrl + "/uploads/" + saved.getImageUrl());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
 
 
     @PreAuthorize("hasAnyRole('OWNER','USER')")

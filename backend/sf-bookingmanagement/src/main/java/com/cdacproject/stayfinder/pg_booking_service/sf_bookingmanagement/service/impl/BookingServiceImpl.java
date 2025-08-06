@@ -62,6 +62,8 @@ public class BookingServiceImpl implements BookingService {
         Booking saved = bookingRepository.save(booking);
         logger.info("Booking created with ID: {}", saved.getId());
 
+        roomClient.updateRoomAvailability(room.getPgId(), room.getId(), false);
+
         return mapToResponse(saved);
     }
 

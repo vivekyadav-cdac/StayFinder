@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication(scanBasePackages = "com.cdacproject.stayfinder.pg_property_service")
 @EnableJpaRepositories(basePackages = "com.cdacproject.stayfinder.pg_property_service.repository")
 @EntityScan(basePackages = "com.cdacproject.stayfinder.pg_property_service.model")
-@EnableJpaAuditing  //  Enables @CreatedDate and @LastModifiedDate
+@EnableJpaAuditing
 @EnableDiscoveryClient
 public class PgPropertyServiceApplication {
 

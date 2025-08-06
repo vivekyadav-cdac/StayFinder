@@ -6,9 +6,7 @@ import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.Ro
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient("SF-PROPERTY-SERVICE")
 public interface RoomClient {
@@ -17,4 +15,13 @@ public interface RoomClient {
     public ResponseEntity<RoomResponseDto> getRoomByPgAndRoomId(
             @PathVariable Long pgId,
             @PathVariable Long roomId);
+
+
+    @PutMapping("/api/pgs/{pgId}/rooms/{roomId}/availability")
+    void updateRoomAvailability(
+                @PathVariable("pgId") Long pgId,
+                @PathVariable("roomId") Long roomId,
+                @RequestParam("available") boolean available
+    );
+
 }

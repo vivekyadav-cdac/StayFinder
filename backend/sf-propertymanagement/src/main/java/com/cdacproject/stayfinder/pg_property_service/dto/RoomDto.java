@@ -18,7 +18,8 @@ public class RoomDto {
 
     @JsonCreator
     public RoomDto(
-            @JsonProperty("id") Long id, Long pgId,
+            @JsonProperty("id") Long id,
+            @JsonProperty("pgId")Long pgId,
             @JsonProperty("number") String number,
             @JsonProperty("type") String type,
             @JsonProperty("rent") double rent,
