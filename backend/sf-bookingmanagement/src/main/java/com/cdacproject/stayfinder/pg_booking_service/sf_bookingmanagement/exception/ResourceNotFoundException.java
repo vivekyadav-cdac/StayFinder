@@ -1,6 +1,6 @@
 package com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.exception;
 
-public class ResourceNotFoundException extends RuntimeException{
+public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException() {
         super("Resource not found");
     }

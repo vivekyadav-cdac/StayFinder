@@ -2,21 +2,21 @@ spring:
   application:
     name: sf-property-service
 
-
   datasource:
     url: jdbc:postgresql://ep-nameless-fog-a1hv10ul-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     username: neondb_owner
     password: npg_rNZBv8IfTKD3
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 gateway:
-  base-url: http://api-gateway:4000
+  base-url: http://apigateway:8000
 
 eureka:
   client:
@@ -24,7 +24,12 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-    hostname: localhost
 
 server:
   port: 8085
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 15MB

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
     List<Room> findByPgId(Long pgId);  // For internal use
@@ -17,6 +18,8 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Page<Room> findByPgIdAndAvailableAndRentBetween(Long pgId, Boolean available, Double minRent, Double maxRent, Pageable pageable);
     
     Page<Room> findByPgIdAndRentBetween(Long pgId, Double minRent, Double maxRent, Pageable pageable);
+
+    Optional<Room> findByIdAndPgId(Long roomId, Long pgId);
 
 }
 

@@ -1,12 +1,11 @@
 server:
   port: 8083
-  servlet:
-    context-path: /api/bookings
 
 
 spring:
   application:
     name: sf-bookingmanagement
+
   security:
     user:
       name: disabled
@@ -37,13 +36,26 @@ spring:
         config:
           default:
             loggerLevel: full
+    discovery:
+      enabled: true
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
     register-with-eureka: true
     fetch-registry: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
 
 logging:
   level:

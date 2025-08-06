@@ -23,8 +23,7 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<BookingResponse> createBooking(
             @RequestHeader("X-User-Id") Long tenantId,
-            @Valid @RequestBody CreateBookingRequest request
-    ) {
+            @Valid @RequestBody CreateBookingRequest request) {
         log.info("Creating booking for tenantId: {}", tenantId);
         BookingResponse booking = bookingService.createBooking(request, tenantId);
         return ResponseEntity.ok(booking);

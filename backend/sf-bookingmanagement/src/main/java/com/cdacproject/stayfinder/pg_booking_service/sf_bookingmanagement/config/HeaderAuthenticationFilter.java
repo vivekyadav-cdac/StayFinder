@@ -14,13 +14,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+
 @Component
 @Order(1)
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+            throws  IOException, ServletException {
 
         String email = request.getHeader("X-User-Email");
         String role = request.getHeader("X-User-Role");
@@ -28,11 +29,14 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
         if (email != null && role != null) {
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
-
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(email, null, authorities);
-
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(email, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            // 🔥 This is important for Feign interceptor!
+            request.setAttribute("role", role);
         }
+
         filterChain.doFilter(request, response);
     }
 }

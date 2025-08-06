@@ -20,3 +20,8 @@ jwt:
     location: classpath:jwt-keystore.jks
     password: password
     alias: jwt-key
+
+logging:
+  level:
+    root: INFO
+    com.stayfinder.Auth_Service: DEBUG

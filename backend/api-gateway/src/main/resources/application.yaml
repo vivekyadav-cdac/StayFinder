@@ -5,6 +5,8 @@ spring:
     user:
       name: disabled
       password: disabled
+  codec:
+    max-in-memory-size: 10MB  # Increase if needed
   cloud:
     gateway:
       routes:
@@ -23,11 +25,22 @@ spring:
         - id: sf-property-service
           uri: lb://SF-PROPERTY-SERVICE
           predicates:
-            - Path=/api/pgs/**,/api/pgs/{pgId}/rooms/**
+            - Path=/api/pgs/**
+          filters:
+            - StripPrefix=0
+            - name: PreserveHostHeader
+        - id: sf-property-service
+          uri: lb://SF-PROPERTY-SERVICE
+          predicates:
+            - Path=/api/pgs/*/rooms/**
+          filters:
+            - StripPrefix=0
+            - name: PreserveHostHeader
         - id: sf-payment-service
           uri: lb://SF-PAYMENT-SERVICE
           predicates:
             - Path=/api/payments/**
+
       globalcors:
         corsConfigurations:
           '[/**]':

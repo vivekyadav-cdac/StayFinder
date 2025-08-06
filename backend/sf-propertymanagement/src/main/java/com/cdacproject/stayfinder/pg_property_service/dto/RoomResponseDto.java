@@ -1,17 +1,27 @@
 package com.cdacproject.stayfinder.pg_property_service.dto;
 
-import java.time.LocalDateTime;
-
 public class RoomResponseDto {
-
     private Long id;
+    private Long pgId;
     private String number;
     private String type;
     private double rent;
     private boolean available;
     private String imageUrl;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+
+    public RoomResponseDto() {}
+
+    public RoomResponseDto(Long id, Long pgId, String number, String type, double rent, boolean available, String imageUrl) {
+        this.id = id;
+        this.pgId = pgId;
+        this.number = number;
+        this.type = type;
+        this.rent = rent;
+        this.available = available;
+        this.imageUrl = imageUrl;
+    }
+
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -61,19 +71,11 @@ public class RoomResponseDto {
         this.imageUrl = imageUrl;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Long getPgId() {
+        return pgId;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setPgId(Long pgId) {
+        this.pgId = pgId;
     }
 }
