@@ -2,13 +2,14 @@ package com.pg.payment.service;
 
 import com.pg.payment.client.BookingClient;
 import com.pg.payment.client.RoomClient;
+import com.pg.payment.dto.BookingResponse;
 import com.pg.payment.dto.PaymentRequest;
+import com.pg.payment.dto.PaymentResponse;
 import com.pg.payment.dto.RazorpayOrderRequest;
 import com.pg.payment.dto.RazorpayOrderResponse;
-import com.pg.payment.model.Booking;
+import com.pg.payment.dto.RoomResponseDto;
 import com.pg.payment.model.Payment;
-import com.pg.payment.model.Room;
-import com.pg.payment.model.Payment.PaymentStatusEnum;
+import com.pg.payment.model.PaymentStatusEnum;
 import com.pg.payment.repository.PaymentRepository;
 
 import com.razorpay.Order;
@@ -39,38 +40,41 @@ public class PaymentService {
         return repo.findAll();
     }
 
-    public Payment processPayment(PaymentRequest request, Integer tenant_id) {
-
-   
-        Booking booking = new Booking();
-        booking.setBookingId(request.getBookingId());
-        booking.setTenant_id(tenant_id);
-
-        Room room = new Room();
-        room.setRent(request.getAmount());
-
-        booking.setRoom(room);
-
-        BigDecimal rent = room.getRent();
-
-//        if (booking == null) {
-//            throw new RuntimeException("Booking not found.");
-//        }
+    public Payment processPayment(PaymentRequest request, Long tenantId){
+    	
+    	BookingResponse booking = bookingClient.getTenantBookings(request.getBookingId());
+//   	BookingResponse booking = new BookingResponse();
+    	
+        if (!booking.getTenantId().equals(tenantId)) {
+            throw new RuntimeException("Tenant ID mismatch");
+        }
+        
+        RoomResponseDto room = roomClient.getRoom(booking.getRoomId());
+//    	RoomResponseDto room = new RoomResponseDto();
+        double rent = room.getRent();
 //
-//        // Validate tenant access
-//        if (!booking.getTenant_id().equals(tenant_id)) {
-//            throw new RuntimeException("Unauthorized: You cannot pay for another tenant's booking.");
-        //       }
-//
-        // Save payment
         Payment payment = new Payment();
-        payment.setBooking(booking);
+        payment.setBookingId(booking.getBookingId());
         payment.setAmount(rent);
         payment.setMethod(request.getMethod());
-        payment.setStatus(PaymentStatusEnum.COMPLETED);
+        payment.setStatus(com.pg.payment.model.PaymentStatusEnum.COMPLETED);
         payment.setCreatedAt(LocalDateTime.now());
-
+       
         return repo.save(payment);
+//        Long dummyBookingId = request.getBookingId(); // Use the one from request
+//        Long dummyTenantId = tenantId;
+//        Long dummyRoomId = 1001L; // Random room ID
+//        double dummyRent = request.getAmount().doubleValue(); // Use the amount from frontend
+//
+//        // Proceed with payment creation using hardcoded/mock data
+//        Payment payment = new Payment();
+//        payment.setBookingId(dummyBookingId);
+//        payment.setAmount(dummyRent);
+//        payment.setMethod(request.getMethod());
+//        payment.setStatus(PaymentStatusEnum.COMPLETED);
+//        payment.setCreatedAt(LocalDateTime.now());
+//
+//        return repo.save(payment);
     }
 
     public RazorpayOrderResponse createRazorpayOrder(RazorpayOrderRequest request) throws RazorpayException{
@@ -92,17 +96,20 @@ public class PaymentService {
                 .amount(request.getAmount())
                 .build();
     }
+    
 
-    public List<Payment> getHistoryByBookingId(Integer bookingId) {
-        return repo.findByBookingId(bookingId);
+//    public List<Payment> getHistoryByBookingId(Integer bookingId) {
+//        return repo.findByBookingId(bookingId);
+//    }
+
+
+    public List<PaymentResponse> getPaymentsByTenant(Long tenantId) {
+        BookingResponse booking = bookingClient.getTenantBookings(tenantId);
+        return repo.findByBookingId(booking.getBookingId());
     }
+    
+//    public List<Payment> getPaymentsByOwner(Long ownerId) {
+//        
+//    }
 
-
-    public List<Payment> getPaymentsByTenant(Integer tenantId) {
-        return repo.findByTenantId(tenantId);
-    }
-
-    public List<Payment> getPaymentsByOwner(Integer ownerId) {
-        return repo.findByOwnerId(ownerId);
-    }
 }

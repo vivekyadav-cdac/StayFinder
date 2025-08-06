@@ -6,9 +6,9 @@ spring:
       name: disable
       password: disable
   datasource:
-    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
-    username: postgres.mbhhzfvfwkqwvznumjmm
-    password: KZWf9xhXTUr80fxv
+    url: jdbc:postgresql://ep-small-thunder-a1mbrg0k-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_vyjmQkB2Gh6P
     driver-class-name: org.postgresql.Driver
 
   jpa:

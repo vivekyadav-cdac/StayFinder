@@ -83,3 +83,12 @@
   color: #444;
   gap: 6px;
 }
+.pg-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  color: #ffc107;
+  font-weight: bold;
+}
+

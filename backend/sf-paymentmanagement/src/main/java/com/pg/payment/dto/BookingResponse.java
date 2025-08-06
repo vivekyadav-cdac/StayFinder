@@ -1,4 +1,5 @@
 package com.pg.payment.dto;
+
 import java.time.LocalDateTime;
 
 import com.pg.payment.model.PaymentMethodEnum;
@@ -13,10 +14,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentResponse {
-    private Long id;
-    private double amount;
-    private PaymentMethodEnum method;
-    private PaymentStatusEnum status;
-    private LocalDateTime createdAt;
+public class BookingResponse {
+    private Long bookingId;
+    private Long pgId;
+    private Long roomId;
+    private Long tenantId;
+    
 }
