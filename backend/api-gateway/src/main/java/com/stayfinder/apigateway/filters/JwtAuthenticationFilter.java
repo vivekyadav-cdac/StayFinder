@@ -77,6 +77,19 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
                     .build();
 
             ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
+            System.out.println("────────────────────────────────────────────");
+            System.out.println("📡 [API-Gateway] Forwarding Request Details:");
+            System.out.println("➡️  URI          : " + mutatedRequest.getURI());
+            System.out.println("📝 Method       : " + mutatedRequest.getMethod());
+            System.out.println("📦 Content-Type : " + mutatedRequest.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
+            System.out.println("🧾 Headers:");
+            mutatedRequest.getHeaders().forEach((key, values) -> {
+                for (String value : values) {
+                    System.out.println("   🔸 " + key + ": " + value);
+                }
+            });
+            System.out.println("────────────────────────────────────────────");
+
             return chain.filter(mutatedExchange);
 
         } catch (ExpiredJwtException e) {

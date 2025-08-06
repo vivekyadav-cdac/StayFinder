@@ -44,10 +44,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-
+        UserDTO userDto = userClient.userLogin(request.getEmail()).getBody();
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        UserDTO userDto = userClient.userLogin(request.getEmail()).getBody();
+
         assert userDto != null;
         var jwtToken = jwtServiceImpl.generateToken(userDto);
         return AuthenticationResponse.builder().token(jwtToken).build();
