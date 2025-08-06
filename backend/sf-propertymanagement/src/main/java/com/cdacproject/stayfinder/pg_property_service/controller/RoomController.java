@@ -8,6 +8,7 @@ import com.cdacproject.stayfinder.pg_property_service.mapper.RoomMapper;
 import com.cdacproject.stayfinder.pg_property_service.model.Room;
 import com.cdacproject.stayfinder.pg_property_service.service.FileStorageService;
 import com.cdacproject.stayfinder.pg_property_service.service.RoomService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -46,7 +47,7 @@ public class RoomController {
     @PreAuthorize("hasRole('OWNER')")
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> addRoom(@PathVariable Long pgId,
-                                     @Valid @RequestPart("room") RoomDto roomDto,
+                                     @RequestPart("room") String roomJson,
                                      @RequestPart(value = "image", required = false) MultipartFile image,
                                      HttpServletRequest request) throws IOException {
 
@@ -55,19 +56,36 @@ public class RoomController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(401, "Missing X-User-Id header", request.getRequestURI()));
         }
-        Long ownerId = Long.valueOf(userIdHeader);
 
-        Room room = roomMapper.toEntity(roomDto);
+        try {
+            Long ownerId = Long.valueOf(userIdHeader);
+            log.info("Creating room for PG ID: {}, Owner ID: {}", pgId, ownerId);
 
-        if (image != null) {
-            String filename = fileStorage.saveFile(image);
-            room.setImageUrl(filename);
+            // Manually parse JSON string to RoomDto
+            ObjectMapper mapper = new ObjectMapper();
+            RoomDto roomDto = mapper.readValue(roomJson, RoomDto.class);
+
+            log.debug("RoomDto parsed: {}", roomDto);
+
+            Room room = roomMapper.toEntity(roomDto);
+
+            if (image != null && !image.isEmpty()) {
+                String filename = fileStorage.saveFile(image);
+                room.setImageUrl(filename);
+            }
+
+            Room saved = roomService.addRoom(pgId, ownerId, room);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(roomMapper.toResponseDto(saved, gatewayUrl));
+
+        } catch (Exception ex) {
+            log.error("Error while creating room for PG ID {}: {}", pgId, ex.getMessage(), ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse(500, "An error occurred while creating room", request.getRequestURI()));
         }
-
-        Room saved = roomService.addRoom(pgId, ownerId, room);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(roomMapper.toResponseDto(saved, gatewayUrl));
     }
+
 
     @PreAuthorize("hasAnyRole('OWNER','USER')")
     @GetMapping
@@ -85,14 +103,6 @@ public class RoomController {
         return ResponseEntity.ok(rooms);
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
-    @GetMapping("/{roomId}")
-    public ResponseEntity<RoomResponseDto> getRoom(@PathVariable Long roomId) {
-        Room room = roomService.getRoomById(roomId)
-                .orElseThrow(() -> new ResourceNotFoundException("Room not found with id: " + roomId));
-        return ResponseEntity.ok(roomMapper.toResponseDto(room, gatewayUrl));
-    }
-
     @PreAuthorize("hasRole('OWNER')")
     @DeleteMapping("/{roomId}")
     public ResponseEntity<?> deleteRoom(@PathVariable Long roomId, HttpServletRequest request) {
@@ -106,4 +116,29 @@ public class RoomController {
         roomService.deleteRoom(roomId, ownerId);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @GetMapping("/{roomId}")
+    public ResponseEntity<RoomResponseDto> getRoomByPgAndRoomId(
+            @PathVariable Long pgId,
+            @PathVariable Long roomId
+    ) {
+        Room room = roomService.getRoomByPgIdAndRoomId(pgId, roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Room not found for PG ID: " + pgId + ", Room ID: " + roomId));
+
+        RoomResponseDto responseDto = new RoomResponseDto(
+                room.getId(),
+                room.getPg().getId(),
+                room.getNumber(),
+                room.getType(),
+                room.getRent(),
+                room.isAvailable(),
+                room.getImageUrl()
+        );
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+
+
 }

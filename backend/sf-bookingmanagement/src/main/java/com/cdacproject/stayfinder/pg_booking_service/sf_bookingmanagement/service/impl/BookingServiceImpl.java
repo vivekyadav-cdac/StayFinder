@@ -1,10 +1,8 @@
 package com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.service.impl;
 
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.client.PGPropertyClient;
-import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.BookingResponse;
-import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.CreateBookingRequest;
-import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.PGDto;
-import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.RoomDto;
+import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.client.RoomClient;
+import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.*;
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.entity.Booking;
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.entity.BookingStatus;
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.exception.ResourceNotFoundException;
@@ -14,8 +12,12 @@ import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.servic
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,24 +31,27 @@ public class BookingServiceImpl implements BookingService {
     private static final Logger logger = LoggerFactory.getLogger(BookingServiceImpl.class);
 
     private final BookingRepository bookingRepository;
+    private final RoomClient roomClient;
     private final PGPropertyClient pgPropertyClient;
 
     @Override
     public BookingResponse createBooking(CreateBookingRequest request, Long tenantId) {
         logger.info("Creating booking for tenant ID: {}", tenantId);
 
-        RoomDto room = pgPropertyClient.getRoomByPgIdAndRoomId(request.getPgId(), request.getRoomId());
+        RoomResponseDto room = roomClient.getRoomByPgAndRoomId( request.getPgId(),
+               request.getRoomId()).getBody();
         if (room == null || !room.isAvailable()) {
             logger.warn("Room {} is not available for booking", request.getRoomId());
             throw new ResourceNotFoundException("Room not available for booking.");
         }
 
-        PGDto pg = pgPropertyClient.getPGById(room.getPgId());
-        logger.info("PG fetched with ID: {}", pg.getId());
+        ResponseEntity<PGResponseDto> pg = pgPropertyClient.getById(room.getPgId());
+
+        logger.info("PG fetched with ID: {}", pg.getBody().getId());
 
         Booking booking = Booking.builder()
                 .roomId(room.getId())
-                .pgId(pg.getId())
+                .pgId(pg.getBody().getId())
                 .tenantId(tenantId)
                 .status(BookingStatus.BOOKED)
                 .startDate(request.getStartDate())
@@ -84,6 +89,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findByTenantId(tenantId)
                 .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
+
 
     private BookingResponse mapToResponse(Booking booking) {
         return BookingResponse.builder()

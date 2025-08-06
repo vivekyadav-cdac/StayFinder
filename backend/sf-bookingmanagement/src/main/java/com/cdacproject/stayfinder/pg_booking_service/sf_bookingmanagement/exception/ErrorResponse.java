@@ -8,6 +8,13 @@ import lombok.Data;
 public class ErrorResponse {
     private int statusCode;
     private String message;
+    private String timestamp;
+    private String path;
+
+    public ErrorResponse(int statusCode, String message, String path) {
+        this.statusCode = statusCode;
+        this.message = message;
+        this.timestamp = java.time.LocalDateTime.now().toString();
+        this.path = path;
+    }
 }
-
-

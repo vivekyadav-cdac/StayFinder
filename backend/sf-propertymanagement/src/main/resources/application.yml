@@ -2,21 +2,21 @@ spring:
   application:
     name: sf-property-service
 
-
   datasource:
-    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:6543/postgres
+    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:5432/postgres
     username: postgres.qwxlricixjwljrdmvecy
     password: VivekCdac@123
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 gateway:
-  base-url: http://api-gateway:4000
+  base-url: http://apigateway:8000
 
 eureka:
   client:
@@ -24,7 +24,12 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-    hostname: localhost
 
 server:
   port: 8085
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 15MB

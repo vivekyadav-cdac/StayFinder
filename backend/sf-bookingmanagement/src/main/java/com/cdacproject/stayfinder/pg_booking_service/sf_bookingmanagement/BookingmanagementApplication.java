@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = "com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.client")
+@EnableFeignClients()
 public class BookingmanagementApplication {
 
 	public static void main(String[] args) {

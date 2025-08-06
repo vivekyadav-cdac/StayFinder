@@ -25,6 +25,7 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
         String email = request.getHeader("X-User-Email");
         String role = request.getHeader("X-User-Role");
         String userIdStr = request.getHeader("X-User-Id");
+        System.out.println( request.getContentType());
 
         if (email != null && role != null) {
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));

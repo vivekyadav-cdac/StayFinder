@@ -83,4 +83,8 @@ public class RoomService {
     public List<Room> getRoomsByPG(Long pgId) {
         return roomRepository.findByPgId(pgId);
     }
+
+    public Optional<Room> getRoomByPgIdAndRoomId(Long pgId, Long roomId) {
+        return roomRepository.findByIdAndPgId(roomId, pgId);
+    }
 }

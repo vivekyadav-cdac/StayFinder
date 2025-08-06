@@ -1,34 +1,24 @@
-package com.cdacproject.stayfinder.pg_property_service.dto;
+package com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public class RoomDto {
-
+public class RoomResponseDto {
     private Long id;
     private Long pgId;
     private String number;
     private String type;
     private double rent;
-    private boolean available = true;
+    private boolean available;
+    private String imageUrl;
 
-    public RoomDto() {
+    public RoomResponseDto() {}
 
-    }
-
-    @JsonCreator
-    public RoomDto(
-            @JsonProperty("id") Long id, Long pgId,
-            @JsonProperty("number") String number,
-            @JsonProperty("type") String type,
-            @JsonProperty("rent") double rent,
-            @JsonProperty("available") boolean available) {
+    public RoomResponseDto(Long id, Long pgId, String number, String type, double rent, boolean available, String imageUrl) {
         this.id = id;
         this.pgId = pgId;
         this.number = number;
         this.type = type;
         this.rent = rent;
         this.available = available;
+        this.imageUrl = imageUrl;
     }
 
     // Getters and Setters
@@ -71,6 +61,14 @@ public class RoomDto {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Long getPgId() {

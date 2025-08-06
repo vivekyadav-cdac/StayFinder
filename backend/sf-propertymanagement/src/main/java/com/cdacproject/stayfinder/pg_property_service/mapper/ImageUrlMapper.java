@@ -13,3 +13,4 @@ public class ImageUrlMapper {
         return gatewayUrl + "/uploads/" + filename;
     }
 }
+

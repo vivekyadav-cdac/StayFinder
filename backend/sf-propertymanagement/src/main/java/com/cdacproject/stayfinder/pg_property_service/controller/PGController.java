@@ -53,11 +53,14 @@ public class PGController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse(401, "Missing user ID header", request.getRequestURI()));
         }
-        Long ownerId = Long.valueOf(userIdHeader);
 
+        Long ownerId = Long.valueOf(userIdHeader);
         log.info("Create PG requested by User ID: {}", ownerId);
 
         PG pg = pgMapper.toEntity(pgDto);
+
+
+        pg.setOwnerId(ownerId);
 
         if (image != null) {
             String filename = fileStorage.saveFile(image);
@@ -68,6 +71,7 @@ public class PGController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(pgMapper.toResponseDto(saved, gatewayUrl));
     }
+
 
     @PreAuthorize("hasAnyRole('OWNER','USER')")
     @GetMapping
