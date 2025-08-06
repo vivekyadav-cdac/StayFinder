@@ -42,9 +42,7 @@ spring:
               - DELETE
               - PUT
             allowedHeaders:
-              - Content-Type
-              - responseType
-              - Authorization
+              - "*"
             allowCredentials: true
 
   jwt:
