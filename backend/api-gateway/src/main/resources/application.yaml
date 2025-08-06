@@ -55,9 +55,7 @@ spring:
               - DELETE
               - PUT
             allowedHeaders:
-              - Content-Type
-              - responseType
-              - Authorization
+              - "*"
             allowCredentials: true
 
   jwt:
@@ -80,9 +78,4 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-management:
-  endpoints:
-    web:
-      exposure:
-        include: gateway
 

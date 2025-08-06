@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 @Component
@@ -36,6 +38,22 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
+
+        System.out.println("────────────────────────────────────────────");
+        System.out.println("📡 [UserManagement] Incoming Request Headers:");
+        System.out.println("➡️  URI          : " + request.getRequestURI());
+        System.out.println("📝 Method       : " + request.getMethod());
+        System.out.println("🧾 Headers:");
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            Enumeration<String> headerValues = request.getHeaders(headerName);
+            while (headerValues.hasMoreElements()) {
+                String value = headerValues.nextElement();
+                System.out.println("   🔹 " + headerName + ": " + value);
+            }
+        }
+        System.out.println("────────────────────────────────────────────");
         filterChain.doFilter(request, response);
     }
 }

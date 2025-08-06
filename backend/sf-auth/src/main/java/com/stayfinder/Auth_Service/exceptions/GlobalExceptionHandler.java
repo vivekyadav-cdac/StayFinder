@@ -3,6 +3,7 @@ package com.stayfinder.Auth_Service.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -39,5 +40,11 @@ public class GlobalExceptionHandler {
         error.put("error", "Unauthenticated");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
+    @ExceptionHandler(FeignException.FeignClientException.class)
+    public ResponseEntity<?> handleAccessDeniedException(FeignException.FeignClientException ex) {
+        error.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
 
 }

@@ -95,7 +95,9 @@ public class JwtAuthenticationFilter implements WebFilter, Ordered {
             ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
             System.out.println("────────────────────────────────────────────");
             System.out.println("📡 [API-Gateway] Forwarding Request Details:");
-            System.out.println("➡  URI          : " + mutatedRequest.getURI());
+
+            System.out.println("➡️  URI          : " + mutatedRequest.getURI());
+
             System.out.println("📝 Method       : " + mutatedRequest.getMethod());
             System.out.println("📦 Content-Type : " + mutatedRequest.getHeaders().getFirst(HttpHeaders.CONTENT_TYPE));
             System.out.println("🧾 Headers:");
