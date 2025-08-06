@@ -3,18 +3,66 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import FindPG from "../pages/FindPG";
 import PGDetails from "../pages/PGDetails";
+import Unauthorized from "../pages/Unauthorized";
+import ProtectedRoute from "../pages/ProtectedRoute";
 
+// Your role-specific dashboard components
+import PublicRoute from "./PublicRoute";
+import AddPG from "../pages/addPg";
+import OwnerDashboard from "../pages/OwnerDeshboard";
 
 export default function AppRoutes() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                 {/* <Route path="/" element={<Login/>}/> */}
-                <Route path="/" element={<Login/>}/>
-                <Route path="/register" element={<Register/>} />
-                <Route path="/findpg" element={<FindPG/>} />
-                <Route path="/pgdetails" element={<PGDetails/>} />
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              {/* <Login /> */}
+              <OwnerDashboard/>
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+        <Route path="/pgdetails" element={<PGDetails />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              {/* Admin Deshboard */}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pg-owner"
+          element={
+            <ProtectedRoute allowedRoles={["pgowner"]}>
+             <OwnerDashboard/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tenant"
+          element={
+            <ProtectedRoute allowedRoles={["TENANT"]}>
+              <FindPG />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/add-pg" element={<AddPG/>}/>
+      </Routes>
+    </BrowserRouter>
+  );
 }
