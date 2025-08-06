@@ -1,5 +1,4 @@
-package com.cdacproject.stayfinder.pg_property_service.config;
-
+package com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

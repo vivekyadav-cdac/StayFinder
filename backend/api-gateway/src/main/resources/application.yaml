@@ -24,12 +24,18 @@ spring:
           uri: lb://SF-PROPERTY-SERVICE
           predicates:
             - Path=/api/pgs/**,/api/pgs/{pgId}/rooms/**
+        - id: sf-payment-service
+          uri: lb://SF-PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payments/**
       globalcors:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
               - "http://localhost:9091"
               - "http://localhost:8081"
+              - "http://localhost:8083"
+              - "http://localhost:8085"
             allowedMethods:
               - GET
               - POST

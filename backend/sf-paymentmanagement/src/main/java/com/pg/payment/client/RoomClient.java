@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.pg.payment.model.Room;
 
-@FeignClient(name = "room-service", url = "http://localhost:8081")
+@FeignClient("SF-PROPERTY-SERVICE")
 public interface RoomClient {
     @GetMapping("/api/rooms/{roomId}")
     Room getRoomById(@PathVariable Integer roomId);
