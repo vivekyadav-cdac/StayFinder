@@ -13,9 +13,9 @@ spring:
       password: disabled
 
   datasource:
-    url: jdbc:postgresql://ep-odd-silence-a148ir45-pooler.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require
+    url: jdbc:postgresql://ep-tiny-wave-a1nljxpd-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
     username: neondb_owner
-    password: npg_StK6vgYH1nJQ
+    password: npg_tVrJ56OPRvGd
     driver-class-name: org.postgresql.Driver
 
   jpa:

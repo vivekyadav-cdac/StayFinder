@@ -4,9 +4,9 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:6543/postgres
-    username: postgres.qwxlricixjwljrdmvecy
-    password: VivekCdac@123
+    url: jdbc:postgresql://ep-nameless-fog-a1hv10ul-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_rNZBv8IfTKD3
     driver-class-name: org.postgresql.Driver
 
   jpa:

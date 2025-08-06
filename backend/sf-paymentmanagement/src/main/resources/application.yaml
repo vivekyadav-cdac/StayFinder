@@ -8,9 +8,9 @@ spring:
     name: sf-paymentmanagement
 
   datasource:
-    url: jdbc:postgresql://aws-0-ap-south-1.pooler.supabase.com:5432/postgres
-    username: postgres.dupmnozhinscfkaenvev
-    password: YP!sn4qU@J6!NF-
+    url: jdbc:postgresql://ep-dark-pine-a1h92tdm-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_iwe4Dtf2dEyL
     driver-class-name: org.postgresql.Driver
 
   jpa:
