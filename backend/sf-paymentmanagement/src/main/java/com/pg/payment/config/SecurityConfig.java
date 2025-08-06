@@ -1,4 +1,4 @@
-package com.cdacproject.stayfinder.pg_property_service.config;
+package com.pg.payment.config;
 
 
 import lombok.RequiredArgsConstructor;

@@ -23,7 +23,7 @@ public class ApplicationConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userClient.getUserByEmail(username).getBody();
+        return username -> userClient.userLogin(username).getBody();
 
     }
 

@@ -1,7 +1,10 @@
 spring:
   application:
     name: apigateway
-
+  security:
+    user:
+      name: disabled
+      password: disabled
   cloud:
     gateway:
       routes:
@@ -21,12 +24,18 @@ spring:
           uri: lb://SF-PROPERTY-SERVICE
           predicates:
             - Path=/api/pgs/**,/api/pgs/{pgId}/rooms/**
+        - id: sf-payment-service
+          uri: lb://SF-PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payments/**
       globalcors:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
               - "http://localhost:9091"
               - "http://localhost:8081"
+              - "http://localhost:8083"
+              - "http://localhost:8085"
             allowedMethods:
               - GET
               - POST
@@ -47,9 +56,19 @@ spring:
 server:
   port: 8000
 
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty.http.client: DEBUG
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
