@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.pg.payment.dto.BookingResponse;
 
-@FeignClient(name = "sf-bookingmanagement") 
+@FeignClient(name = "SF-BOOKINGMANAGEMENT")
 public interface BookingClient {
 
 	@GetMapping

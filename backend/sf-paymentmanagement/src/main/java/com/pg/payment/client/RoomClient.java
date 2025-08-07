@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.pg.payment.dto.RoomResponseDto;
 
-@FeignClient(name = "sf-propertymanagement")
+@FeignClient(name = "SF-PROPERTY-SERVICE")
 public interface RoomClient {
 	
 //	@PreAuthorize("hasAnyRole('OWNER','USER')")
