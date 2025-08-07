@@ -17,13 +17,13 @@ const Register = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "TENANT",
+    role: "OWNER",
   });
 
   useEffect(() => {
     if (!loading && isAuthenticated && role) {
       if (role === "admin") navigate("/admin");
-      else if (role === "pgowner") navigate("/pg-owner");
+      else if (role === "OWNER") navigate("/pg-owner");
       else if (role === "TENANT") navigate("/tenant");
     }
   }, [loading, isAuthenticated, role, navigate]);

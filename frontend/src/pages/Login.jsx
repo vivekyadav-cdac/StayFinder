@@ -10,20 +10,18 @@ const Login = () => {
 
   const { isAuthenticated, role, error } = useSelector((state) => state.auth);
 
-  const [email, setEmail] = useState("john12@gmail.com");
-  const [password, setPassword] = useState("john@1234");
+  const [email, setEmail] = useState("user1@gmail.com");
+  const [password, setPassword] = useState("123456");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-  console.log("Login status changed", { isAuthenticated, role });
-
-  if (isAuthenticated) {
-    if (role === "admin") navigate("/admin");
-    else if (role === "pgowner") navigate("/pg-owner");
-    else if (role === "TENANT") navigate("/tenant");
-  }
-}, [isAuthenticated, role, navigate]);
+    if (isAuthenticated) {
+      if (role === "admin") navigate("/admin");
+      else if (role === "OWNER") navigate("/pg-owner");
+      else if (role === "TENANT") navigate("/tenant");
+    }
+  }, [isAuthenticated, role, navigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -32,7 +30,8 @@ const Login = () => {
     if (!email) newErrors.email = "Email is required.";
     else if (!emailRegex.test(email)) newErrors.email = "Invalid email format.";
     if (!password) newErrors.password = "Password is required.";
-    else if (password.length < 6) newErrors.password = "Password must be at least 6 characters.";
+    else if (password.length < 6)
+      newErrors.password = "Password must be at least 6 characters.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -46,7 +45,7 @@ const Login = () => {
     try {
       const resultAction = await dispatch(loginUser({ email, password }));
       console.log("Login result:", resultAction);
-      
+
       if (!loginUser.fulfilled.match(resultAction)) {
         alert("Login failed. Please check your credentials.");
       }
@@ -75,17 +74,23 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email"
                 />
-                {errors.email && <div className="invalid-feedback">{errors.email}</div>}
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
               </div>
               <div className="mb-3">
                 <input
                   type="password"
-                  className={`form-control ${errors.password ? "is-invalid" : ""}`}
+                  className={`form-control ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Password"
                 />
-                {errors.password && <div className="invalid-feedback">{errors.password}</div>}
+                {errors.password && (
+                  <div className="invalid-feedback">{errors.password}</div>
+                )}
               </div>
               <button
                 type="submit"
@@ -118,7 +123,15 @@ const Login = () => {
 
         {/* Right Image */}
         <div className="col-md-6 d-none d-md-flex align-items-center justify-content-center">
-          <div className="position-relative" style={{ height: "620px", width: "100%", maxWidth: "500px", borderRadius: "16px" }}>
+          <div
+            className="position-relative"
+            style={{
+              height: "620px",
+              width: "100%",
+              maxWidth: "500px",
+              borderRadius: "16px",
+            }}
+          >
             <img
               src="https://visor.gumlet.io//public/assets/home/desktop/hero-img.png?compress=true&format=auto&quality=75&dpr=auto&h=480&w=522&ar=unset"
               alt="Stay Finder"

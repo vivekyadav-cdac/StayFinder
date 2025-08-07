@@ -8,8 +8,9 @@ import ProtectedRoute from "../pages/ProtectedRoute";
 
 // Your role-specific dashboard components
 import PublicRoute from "./PublicRoute";
-import AddPG from "../pages/addPg";
+import AddPG from "../pages/AddPg";
 import OwnerDashboard from "../pages/OwnerDeshboard";
+import UserProfile from "../pages/UserProfile";
 
 export default function AppRoutes() {
   return (
@@ -19,8 +20,8 @@ export default function AppRoutes() {
           path="/"
           element={
             <PublicRoute>
-              {/* <Login /> */}
-              <OwnerDashboard/>
+              <Login />
+              {/* <OwnerDashboard/> */}
             </PublicRoute>
           }
         />
@@ -46,7 +47,7 @@ export default function AppRoutes() {
         <Route
           path="/pg-owner"
           element={
-            <ProtectedRoute allowedRoles={["pgowner"]}>
+            <ProtectedRoute allowedRoles={["OWNER"]}>
              <OwnerDashboard/>
             </ProtectedRoute>
           }
@@ -62,6 +63,7 @@ export default function AppRoutes() {
 
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/add-pg" element={<AddPG/>}/>
+        <Route path="/user-profile" element={<UserProfile />} />
       </Routes>
     </BrowserRouter>
   );

@@ -6,7 +6,7 @@ const PublicRoute = ({ children }) => {
 
   if (isAuthenticated) {
     if (role === "admin") return <Navigate to="/admin" replace />;
-    if (role === "pgowner") return <Navigate to="/pg-owner" replace />;
+    if (role === "OWNER") return <Navigate to="/pg-owner" replace />;
     if (role === "TENANT") return <Navigate to="/tenant" replace />;
   }
 

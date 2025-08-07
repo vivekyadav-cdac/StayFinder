@@ -11,7 +11,10 @@ export const loginUser = createAsyncThunk(
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
         const decoded = jwtDecode(res.data.token);
+        console.log("Decoded token:", decoded);
+        
         localStorage.setItem("role", decoded.role);
+        localStorage.setItem("userId",decoded.userId);
         return res.data;
       }
     } catch (error) {
@@ -40,12 +43,14 @@ export const registerUser = createAsyncThunk(
 const token = localStorage.getItem("token");
 let decodedUser = null;
 let role = null;
+let userId = null;
 
 if (token) {
   try {
     const decoded = jwtDecode(token);
     decodedUser = { email: decoded.sub };
     role = decoded.role;
+    userId = decoded.userId;
   } catch (e) {
     console.error("Invalid token", e);
     localStorage.removeItem("token");
@@ -59,6 +64,7 @@ const initialState = {
   isAuthenticated: !!token,
   loading: false,
   error: null,
+  userId: userId,
 };
 
 
@@ -71,6 +77,7 @@ const authSlice = createSlice({
       localStorage.removeItem("role");
       state.user = null;
       state.role = null;
+      state.userId = null;
       state.isAuthenticated = false;
     },
   },
@@ -108,6 +115,7 @@ const authSlice = createSlice({
           const decoded = jwtDecode(action.payload.token);
           state.user = { email: decoded.sub };
           state.role = decoded.role;
+          state.userId = decoded.userId;
           state.isAuthenticated = true;
         } else {
           state.user = null;
