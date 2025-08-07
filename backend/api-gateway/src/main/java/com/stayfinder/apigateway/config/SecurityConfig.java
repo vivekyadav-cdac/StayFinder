@@ -39,7 +39,7 @@
                                         "/api/bookings/**",
                                     "/api/pgs/**",
                                     "/api/pgs/{pgId}/rooms/**",
-                                    "/api/payments").permitAll()
+                                    "/api/payments/**").permitAll()
                             .anyExchange().authenticated()
                     )
                     .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION)
