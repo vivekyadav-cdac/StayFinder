@@ -115,7 +115,7 @@ public class PGController {
 
 
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @PreAuthorize("hasAnyRole('OWNER','USER','ADMIN')")
     @GetMapping
     public ResponseEntity<Page<PGResponseDto>> getAll(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int size,
@@ -126,7 +126,7 @@ public class PGController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @PreAuthorize("hasAnyRole('OWNER','USER','ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PGResponseDto> getById(@PathVariable Long id) {
         PG pg = pgService.getPGById(id)
@@ -134,7 +134,7 @@ public class PGController {
         return ResponseEntity.ok(pgMapper.toResponseDto(pg, gatewayUrl));
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasRole('OWNER','ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, HttpServletRequest request) {
         String userIdHeader = request.getHeader("X-User-Id");

@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axios";
 
-// Get All Users (Admin)
+// ✅ Get All Users (Admin)
 export const getAllUsers = createAsyncThunk(
   "user/getAllUsers",
   async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get("/api/v1/user/users");
+      const res = await axiosInstance.get("/api/v1/user");
       return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -16,7 +16,7 @@ export const getAllUsers = createAsyncThunk(
   }
 );
 
-// Get Single User
+// ✅ Get Single User
 export const getUser = createAsyncThunk(
   "user/getUser",
   async (userId, thunkAPI) => {
@@ -130,7 +130,7 @@ const userSlice = createSlice({
       .addCase(deleteUser.fulfilled, (state, action) => {
         state.loading = false;
         // Remove deleted user from users array
-        state.users = state.users.filter((user) => user.id !== action.payload);
+        state.users = state.users.filter(user => user.id !== action.payload);
       })
       .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;

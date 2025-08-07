@@ -36,6 +36,13 @@ spring:
           filters:
             - StripPrefix=0
             - name: PreserveHostHeader
+        - id: sf-property-service
+          uri: lb://SF-PROPERTY-SERVICE
+          predicates:
+            - Path=/api/images/**
+          filters:
+            - StripPrefix=0
+            - name: PreserveHostHeader
         - id: sf-payment-service
           uri: lb://SF-PAYMENT-SERVICE
           predicates:

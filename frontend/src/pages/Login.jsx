@@ -10,14 +10,14 @@ const Login = () => {
 
   const { isAuthenticated, role, error } = useSelector((state) => state.auth);
 
-  const [email, setEmail] = useState("user1@gmail.com");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("admin@gmail.com");
+  const [password, setPassword] = useState("admin123");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
-      if (role === "admin") navigate("/admin");
+      if (role === "ADMIN") navigate("/admin");
       else if (role === "OWNER") navigate("/pg-owner");
       else if (role === "TENANT") navigate("/tenant");
     }

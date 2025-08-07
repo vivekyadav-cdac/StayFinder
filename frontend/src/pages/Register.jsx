@@ -17,16 +17,16 @@ const Register = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "OWNER",
+    role: "TENANT",
   });
 
-  useEffect(() => {
-    if (!loading && isAuthenticated && role) {
-      if (role === "admin") navigate("/admin");
-      else if (role === "OWNER") navigate("/pg-owner");
-      else if (role === "TENANT") navigate("/tenant");
-    }
-  }, [loading, isAuthenticated, role, navigate]);
+  // useEffect(() => {
+  //   if (!loading && isAuthenticated && role) {
+  //     if (role === "ADMIN") navigate("/admin");
+  //     else if (role === "OWNER") navigate("/pg-owner");
+  //     else if (role === "TENANT") navigate("/tenant");
+  //   }
+  // }, [loading, isAuthenticated, role, navigate]);
 
   const [formErrors, setFormErrors] = useState({});
 
@@ -70,7 +70,7 @@ const Register = () => {
       alert("Registration successful!");
       navigate("/TENANT");
     } else {
-      alert(result.payload || "Registration failed.");
+      alert(result.payload.error || "Registration failed.");
     }
   };
 

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import FindPG from "../pages/FindPG";
@@ -11,20 +11,22 @@ import PublicRoute from "./PublicRoute";
 import AddPG from "../pages/AddPg";
 import OwnerDashboard from "../pages/OwnerDeshboard";
 import UserProfile from "../pages/UserProfile";
+import AdminDashboard from "../pages/AdminDeshboard";
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route
-          path="/"
+          path="/login"
           element={
             <PublicRoute>
               <Login />
-              {/* <OwnerDashboard/> */}
             </PublicRoute>
           }
         />
+
         <Route
           path="/register"
           element={
@@ -35,12 +37,11 @@ export default function AppRoutes() {
         />
         <Route path="/pgdetails" element={<PGDetails />} />
 
-        {/* Protected Routes */}
         <Route
           path="/admin"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              {/* Admin Deshboard */}
+            <ProtectedRoute allowedRoles={["ADMIN"]}>
+              <AdminDashboard/>
             </ProtectedRoute>
           }
         />
@@ -48,7 +49,7 @@ export default function AppRoutes() {
           path="/pg-owner"
           element={
             <ProtectedRoute allowedRoles={["OWNER"]}>
-             <OwnerDashboard/>
+              <OwnerDashboard />
             </ProtectedRoute>
           }
         />
@@ -62,7 +63,7 @@ export default function AppRoutes() {
         />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="/add-pg" element={<AddPG/>}/>
+        <Route path="/add-pg" element={<AddPG />} />
         <Route path="/user-profile" element={<UserProfile />} />
       </Routes>
     </BrowserRouter>

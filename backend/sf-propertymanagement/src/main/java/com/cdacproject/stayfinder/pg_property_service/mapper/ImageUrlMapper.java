@@ -10,7 +10,6 @@ public class ImageUrlMapper {
     @Named("buildImageUrl")
     public String buildImageUrl(String filename, @Context String gatewayUrl) {
         if (filename == null || filename.isEmpty()) return null;
-        return gatewayUrl + "/uploads/" + filename;
+        return gatewayUrl + "/api/images/" + filename;
     }
 }
-
