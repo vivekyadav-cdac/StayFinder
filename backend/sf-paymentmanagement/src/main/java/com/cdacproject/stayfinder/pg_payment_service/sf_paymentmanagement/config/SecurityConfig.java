@@ -1,4 +1,4 @@
-package com.cdacproject.stayfinder.pg_property_service.config;
+package com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.config;
 
 
 import lombok.RequiredArgsConstructor;
@@ -30,16 +30,11 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/pgs/{id}").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(headerAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    @Bean
-    public MultipartResolver multipartResolver() {
-        return new StandardServletMultipartResolver();
-    }
 
 }

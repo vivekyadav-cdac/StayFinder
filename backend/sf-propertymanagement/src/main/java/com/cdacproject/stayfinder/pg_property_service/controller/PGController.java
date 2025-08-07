@@ -126,7 +126,7 @@ public class PGController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+
     @GetMapping("/{id}")
     public ResponseEntity<PGResponseDto> getById(@PathVariable Long id) {
         PG pg = pgService.getPGById(id)

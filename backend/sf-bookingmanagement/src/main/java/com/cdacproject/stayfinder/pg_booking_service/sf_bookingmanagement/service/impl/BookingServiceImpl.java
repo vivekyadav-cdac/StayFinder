@@ -92,6 +92,23 @@ public class BookingServiceImpl implements BookingService {
                 .stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
+    @Override
+    public BookingResponse getBookingById(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + bookingId));
+
+        return BookingResponse.builder()
+                .id(booking.getId())
+                .pgId(booking.getPgId())
+                .roomId(booking.getRoomId())
+                .tenantId(booking.getTenantId())
+                .status(booking.getStatus())
+                .startDate(booking.getStartDate())
+                .endDate(booking.getEndDate())
+                .createdAt(booking.getCreatedAt())
+                .build();
+    }
+
 
     private BookingResponse mapToResponse(Booking booking) {
         return BookingResponse.builder()
