@@ -105,12 +105,25 @@ public class UserService {
             throw new UsernameNotFoundException("User not Found");
         }
         User user = userOptional.get();
-        BeanUtils.copyProperties(userDto, user, "id");
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User savedUser = userRepository.save(user);
-        if(!userDto.getEmail().equals(savedUser.getEmail())){
-            throw  new IllegalStateException("Unable to Update User Details");
+        String oldPassword = user.getPassword();
+        String newPassword = userDto.getPassword();
+        if(userDto.getLastName()!=null && userDto.getFirstName()!=null && userDto.getPhone()!=null){
+            user.setFirstName(userDto.getFirstName());
+            user.setLastName(userDto.getLastName());
+            user.setPhone(userDto.getPhone());
         }
+        if(!user.getRole().equals(userDto.getRole())&&userDto.getRole()!=null){
+            user.setRole(userDto.getRole());
+        }
+        if(newPassword == null){
+            newPassword = oldPassword;
+            user.setPassword(newPassword);
+            User savedUser = userRepository.save(user);
+            userDto.setPassword(user.getPassword());
+            return userDto;
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        User savedUser = userRepository.save(user);
         userDto.setPassword(user.getPassword());
         return userDto;
     }

@@ -18,31 +18,31 @@ const OwnerDashboard = () => {
 
   const navigate = useNavigate();
 
-//   useEffect(() => {
-//     if (!token || role !== "OWNER") {
-//       navigate("/login");
-//       return;
-//     }
+  //   useEffect(() => {
+  //     if (!token || role !== "OWNER") {
+  //       navigate("/login");
+  //       return;
+  //     }
 
-//     fetchPGs();
-//   }, []);
+  //     fetchPGs();
+  //   }, []);
 
-//   const fetchPGs = async () => {
-//     try {
-//       setLoading(true);
-//       const res = await axios.get("http://localhost:8000/api/pgs", {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       });
-//       setPgList(res.data.content);
-//     } catch (err) {
-//       setError("Failed to fetch PGs");
-//       console.error(err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
+  //   const fetchPGs = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const res = await axios.get("http://localhost:8000/api/pgs", {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       });
+  //       setPgList(res.data.content);
+  //     } catch (err) {
+  //       setError("Failed to fetch PGs");
+  //       console.error(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
   const deletePG = async (pgId) => {
     // if (!window.confirm("Are you sure you want to delete this PG?")) return;
@@ -63,24 +63,19 @@ const OwnerDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">My PG Listings</h2>
-          <button
-            onClick={() => navigate("/add-pg")}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            + Add New PG
-          </button>
-        </div>
-
+      <div className="max-w-6xl mx-auto p-6 border">
         {/* {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {pgList.length === 0 && !loading && <p>No PGs found.</p>} */}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-6 bg-dark">
           {pgList.map((pg) => (
             <PGCard data={pg}/>
+          ))}
+        </div> */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {pgList.map((pg, index) => (
+            <PGCard key={index} data={pg} />
           ))}
         </div>
       </div>
