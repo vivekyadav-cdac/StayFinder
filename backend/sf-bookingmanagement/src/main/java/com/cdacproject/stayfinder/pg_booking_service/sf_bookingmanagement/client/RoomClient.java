@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient("SF-PROPERTY-SERVICE")
 public interface RoomClient {
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT')")
     @GetMapping("api/pgs/{pgId}/rooms/{roomId}")
     public ResponseEntity<RoomResponseDto> getRoomByPgAndRoomId(
             @PathVariable Long pgId,

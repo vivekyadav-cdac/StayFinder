@@ -38,7 +38,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponse createBooking(CreateBookingRequest request, Long tenantId) {
         logger.info("Creating booking for tenant ID: {}", tenantId);
 
-        RoomResponseDto room = roomClient.getRoomByPgAndRoomId( request.getPgId(),
+        RoomResponseDto room = roomClient.getRoomByPgAndRoomId(request.getPgId(),
                request.getRoomId()).getBody();
         if (room == null || !room.isAvailable()) {
             logger.warn("Room {} is not available for booking", request.getRoomId());

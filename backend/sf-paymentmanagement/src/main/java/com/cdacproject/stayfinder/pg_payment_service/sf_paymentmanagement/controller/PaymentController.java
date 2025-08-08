@@ -1,5 +1,6 @@
 package com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.dto.CreatePaymentRequest;
 import com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.dto.PaymentResponse;
 import com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.dto.RazorpayOrderRequest;
@@ -61,12 +62,15 @@ public class PaymentController {
 
             Order order = razorpayOrderService.createRazorpayOrder(amount, "INR", receiptId);
 
+            System.out.println("Oreder created successfully: " + order);
+
             RazorpayOrderResponse response = new RazorpayOrderResponse();
             response.setOrderId(order.get("id"));
             response.setKey("rzp_test_tgTBSwXi2pgDqY");
             response.setAmount(amount);
-
+            System.out.println("Oreder created successfully: " + response);
             return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
