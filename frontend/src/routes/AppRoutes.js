@@ -12,6 +12,7 @@ import AddPG from "../pages/AddPg";
 import OwnerDashboard from "../pages/OwnerDeshboard";
 import UserProfile from "../pages/UserProfile";
 import AdminDashboard from "../pages/AdminDeshboard";
+import RazorpayPaymentPage from "../pages/RazorpayPaymentPage";
 
 export default function AppRoutes() {
   return (
@@ -41,7 +42,7 @@ export default function AppRoutes() {
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={["ADMIN"]}>
-              <AdminDashboard/>
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />
@@ -65,6 +66,7 @@ export default function AppRoutes() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/add-pg" element={<AddPG />} />
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/razorpay-payment" element={<RazorpayPaymentPage />} />
       </Routes>
     </BrowserRouter>
   );

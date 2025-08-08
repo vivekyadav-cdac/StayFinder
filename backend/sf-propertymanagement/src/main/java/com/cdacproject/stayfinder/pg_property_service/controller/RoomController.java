@@ -118,7 +118,7 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','TENANT','ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT')")
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomResponseDto> getRoomByPgAndRoomId(
             @PathVariable Long pgId,
