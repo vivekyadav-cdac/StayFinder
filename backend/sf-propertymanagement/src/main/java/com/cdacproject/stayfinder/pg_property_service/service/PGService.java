@@ -37,7 +37,7 @@ public class PGService {
     /**  Get all PGs (with optional city filter) */
     public Page<PG> getAllPGs(String city, Pageable pageable) {
         Page<PG> page = (city != null && !city.isEmpty())
-                ? pgRepository.findByCity(city, pageable)
+                ? pgRepository.findByCityIgnoreCase(city, pageable)
                 : pgRepository.findAll(pageable);
 
         log.debug("Fetched {} PGs (city filter: {})", page.getTotalElements(), city);

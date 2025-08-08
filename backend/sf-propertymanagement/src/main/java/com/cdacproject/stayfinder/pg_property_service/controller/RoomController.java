@@ -44,7 +44,7 @@ public class RoomController {
         this.fileStorage = fileStorage;
     }
 
-    @PreAuthorize("hasRole('OWNER')")
+    @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
     @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<?> addRoom(@PathVariable Long pgId,
                                      @RequestPart("room") String roomJson,
@@ -89,7 +89,7 @@ public class RoomController {
     }
 
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT','ADMIN')")
     @GetMapping
     public ResponseEntity<Page<RoomResponseDto>> getRooms(@PathVariable Long pgId,
                                                           @RequestParam(defaultValue = "0") int page,
@@ -119,7 +119,7 @@ public class RoomController {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT','ADMIN')")
     @GetMapping("/{roomId}")
     public ResponseEntity<RoomResponseDto> getRoomByPgAndRoomId(
             @PathVariable Long pgId,

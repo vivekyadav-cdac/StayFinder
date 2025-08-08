@@ -26,7 +26,8 @@ const LogOutButton = () => {
       style={{ minWidth: "130px" }}
       aria-label="Logout"
     >
-      
+      {/* //error */}
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
       <span className="ms-auto fw-semibold" style={{ marginLeft: "10px" }}>
         Logout
       </span>

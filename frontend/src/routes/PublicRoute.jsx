@@ -5,8 +5,8 @@ const PublicRoute = ({ children }) => {
   const { isAuthenticated, role } = useSelector((state) => state.auth);
 
   if (isAuthenticated) {
-    if (role === "admin") return <Navigate to="/admin" replace />;
-    if (role === "pgowner") return <Navigate to="/pg-owner" replace />;
+    if (role === "ADMIN") return <Navigate to="/admin" replace />;
+    if (role === "OWNER") return <Navigate to="/pg-owner" replace />;
     if (role === "TENANT") return <Navigate to="/tenant" replace />;
   }
 

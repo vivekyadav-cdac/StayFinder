@@ -1,10 +1,10 @@
 .pg-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   width: 280px;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   position: relative;
 }
 
@@ -29,7 +29,7 @@
   font-size: 18px;
   color: #666;
   cursor: pointer;
-  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
 }
 
 .pg-body {
@@ -50,7 +50,7 @@
 }
 
 .pg-gender {
-  color: #00B5C2;
+  color: #00b5c2;
   font-weight: 500;
 }
 
@@ -69,8 +69,8 @@
 
 .pg-discount {
   font-size: 12px;
-  background-color: #D2F3F3;
-  color: #00B5C2;
+  background-color: #d2f3f3;
+  color: #00b5c2;
   padding: 4px 8px;
   border-radius: 6px;
   font-weight: 500;
@@ -82,6 +82,7 @@
   font-size: 13px;
   color: #444;
   gap: 6px;
+  margin-bottom: 6px;
 }
 .pg-rating {
   display: flex;
@@ -91,4 +92,3 @@
   color: #ffc107;
   font-weight: bold;
 }
-
