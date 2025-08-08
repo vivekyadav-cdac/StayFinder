@@ -2,6 +2,7 @@ package com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.contr
 
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.BookingResponse;
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.dto.CreateBookingRequest;
+import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.entity.Booking;
 import com.cdacproject.stayfinder.pg_booking_service.sf_bookingmanagement.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,4 +48,10 @@ public class BookingController {
         List<BookingResponse> bookings = bookingService.getBookingsByTenant(tenantId);
         return ResponseEntity.ok(bookings);
     }
+    @GetMapping("/{bookingId}")
+    public ResponseEntity<BookingResponse> getBookingById(@PathVariable Long bookingId) {
+        BookingResponse response = bookingService.getBookingById(bookingId);
+        return ResponseEntity.ok(response);
+    }
+
 }

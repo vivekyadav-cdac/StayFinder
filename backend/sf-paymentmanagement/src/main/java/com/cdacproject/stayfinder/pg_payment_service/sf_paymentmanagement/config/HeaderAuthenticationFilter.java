@@ -1,4 +1,4 @@
-package com.cdacproject.stayfinder.pg_property_service.config;
+package com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,7 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 @Component
 @Order(1)
@@ -36,20 +35,16 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
-        System.out.println("────────────────────────────────────────────");
-        System.out.println("➡️  URI          : " + request.getRequestURI());
-        System.out.println("📝 Method       : " + request.getMethod());
-        System.out.println("🧾 Headers:");
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            Enumeration<String> headerValues = request.getHeaders(headerName);
-            while (headerValues.hasMoreElements()) {
-                String value = headerValues.nextElement();
-                System.out.println("   🔹 " + headerName + ": " + value);
-            }
-        }
-        System.out.println("────────────────────────────────────────────");
+        System.out.println("\n--- Incoming Request ---");
+        System.out.println("Method: " + request.getMethod());
+        System.out.println("URI: " + request.getRequestURI());
+
+        System.out.println("Headers:");
+        Collections.list(request.getHeaderNames()).forEach(headerName -> {
+            System.out.println("  " + headerName + ": " + request.getHeader(headerName));
+        });
+
+        System.out.println("------------------------\n");
         filterChain.doFilter(request, response);
     }
 }

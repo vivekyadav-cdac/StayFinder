@@ -46,3 +46,4 @@ public class Booking {
         this.createdAt = LocalDateTime.now();
     }
 }
+

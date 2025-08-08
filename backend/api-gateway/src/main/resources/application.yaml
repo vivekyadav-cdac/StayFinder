@@ -36,6 +36,8 @@ spring:
           filters:
             - StripPrefix=0
             - name: PreserveHostHeader
+        - id: sf-paymentmanagement
+          uri: lb://SF-PAYMENTMANAGEMENT
         - id: sf-property-service
           uri: lb://SF-PROPERTY-SERVICE
           predicates:
@@ -43,8 +45,6 @@ spring:
           filters:
             - StripPrefix=0
             - name: PreserveHostHeader
-        - id: sf-payment-service
-          uri: lb://SF-PAYMENT-SERVICE
           predicates:
             - Path=/api/payments/**
 
@@ -56,6 +56,7 @@ spring:
               - "http://localhost:8081"
               - "http://localhost:8083"
               - "http://localhost:8085"
+              - "http://localhost:8095"
             allowedMethods:
               - GET
               - POST
