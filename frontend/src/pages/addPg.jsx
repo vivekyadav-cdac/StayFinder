@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-// import { addPg } from "../store/slices/pgSlice";  // Path to your pgSlice file
+import { addPg } from "../features/pg/pgSlice";
 
 const AddPG = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { role } = useSelector((state) => state.auth);
-  const { loading, error } = useSelector((state) => state.pgList);
+  const { loading, error } = useSelector((state) => state.pg);
 
   const [pgData, setPgData] = useState({
     name: "",
@@ -30,6 +29,8 @@ const AddPG = () => {
     { name: "state", placeholder: "State", required: true },
     { name: "pin", placeholder: "Pin", required: true },
     { name: "contact", placeholder: "Contact", required: true },
+    { name: "latitude", placeholder: "Latitude", required: true },
+    { name: "longitude", placeholder: "Longitude", required: true },
   ];
 
   const handleChange = (e) => {
@@ -44,25 +45,37 @@ const AddPG = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const pgPayload = {
+      ...pgData,
+      latitude: parseFloat(pgData.latitude),
+      longitude: parseFloat(pgData.longitude),
+    };
+
     const formData = new FormData();
-    formData.append("pg", new Blob([JSON.stringify(pgData)], { type: "application/json" }));
+    formData.append(
+      "pg",
+      new Blob([JSON.stringify(pgPayload)], { type: "application/json" })
+    );
     if (image) formData.append("image", image);
 
-    // dispatch(addPg(formData))
-    //   .unwrap()
-    //   .then(() => {
-    //     navigate(-1);
-    //   })
-    //   .catch((err) => {
-    //     console.error("Error adding PG:", err);
-    //   });
+    dispatch(addPg(formData))
+      .unwrap()
+      .then(() => {
+        navigate(-1);
+      })
+      .catch((err) => {
+        console.error("Error adding PG:", err);
+      });
   };
 
   return (
     <div className="container-fluid vh-100 d-flex align-items-center justify-content-center">
       <div className="row w-100" style={{ maxWidth: "1000px" }}>
         <div className="d-flex align-items-center justify-content-center">
-          <div className="card shadow p-4 w-100" style={{ maxWidth: "400px", borderRadius: "16px" }}>
+          <div
+            className="card shadow p-4 w-100"
+            style={{ maxWidth: "400px", borderRadius: "16px" }}
+          >
             <h3 className="mb-4 text-center">Add PG</h3>
             <form onSubmit={handleSubmit}>
               {formFields.map(({ name, placeholder, required }) => (
@@ -78,6 +91,7 @@ const AddPG = () => {
                   />
                 </div>
               ))}
+
               <div>
                 <select
                   name="type"
@@ -100,9 +114,12 @@ const AddPG = () => {
                 />
               </div>
 
-              {error && <p className="text-danger text-center">{error}</p>}
 
-              <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+              <button
+                type="submit"
+                className="btn btn-primary w-100"
+                disabled={loading}
+              >
                 {loading ? "Adding PG..." : "Add PG"}
               </button>
             </form>

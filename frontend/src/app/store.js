@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
-import pgListReducer from "../features/place/placesSlice";
 import userReducer from "../features/user/userSlice";
+import pgReducer from "../features/pg/pgSlice";
+import roomReducer from "../features/pg/roomSlice";
 
 export const store = configureStore({
-    reducer:{
-        auth: authReducer,
-        pgList: pgListReducer,
-        user: userReducer, 
-    },
+  reducer: {
+    auth: authReducer,
+    user: userReducer,
+    pg: pgReducer,
+    room: roomReducer,
+  },
 });

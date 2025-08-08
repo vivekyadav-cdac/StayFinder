@@ -11,6 +11,6 @@ import java.util.List;
 public interface PGRepository extends JpaRepository<PG, Long> {
     List<PG> findByOwnerId(Long ownerId);
     List<PG> findByCity(String city);
-    Page<PG> findByCity(String city, Pageable pageable); // Paginated for API
+    Page<PG> findByCityIgnoreCase(String city, Pageable pageable);
 
 }

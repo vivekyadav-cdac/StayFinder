@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const token = localStorage.getItem("token");
 
   const [pgs, setPgs] = useState([]);
+  const [view, setView] = useState("users"); // 'users' or 'pgs'
 
   useEffect(() => {
     if (!token || role !== "ADMIN") {
@@ -47,24 +48,47 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
-        <Link className="navbar-brand" to="/">
+        <Link className="navbar-brand font-bold text-xl" to="/">
           StayFinder
         </Link>
+
         <div className="ms-auto">
           <LogOutButton />
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <div className="max-w-7xl mx-auto p-6 ">
+        <div className="flex gap-4 mb-6 mt-4">
+          <button
+            onClick={() => setView("users")}
+            className={`px-4 py-2 rounded m-1  ${
+              view === "users"
+                ? "btn btn-primary align-items-center gap-2"
+                : "btn btn-outline-secondary align-items-center gap-2"
+            }`}
+          >
+            Show Users
+          </button>
+          <button
+            onClick={() => setView("pgs")}
+            className={`px-4 py-2 rounded ${
+              view === "pgs"
+                ? "btn btn-primary align-items-center gap-2"
+                : "btn btn-outline-secondary align-items-center gap-2"
+            }`}
+          >
+            Show PGs
+          </button>
+        </div>
 
         {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">{error}</p>}
 
-        <div className="flex justify-center">
-          <UserList users={users} onDelete={handleDeleteUser} />
-        </div>
-        <PGList pgs={pgs} />
+        {view === "users" && (
+          <div className="flex justify-center">
+            <UserList users={users} onDelete={handleDeleteUser} />
+          </div>
+        )}
+        <div>{view === "pgs" && <PGList pgs={pgs} />}</div>
       </div>
     </div>
   );
