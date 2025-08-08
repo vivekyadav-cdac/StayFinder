@@ -10,8 +10,8 @@ const Login = () => {
 
   const { isAuthenticated, role, error } = useSelector((state) => state.auth);
 
-  const [email, setEmail] = useState("admin@gmail.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("owner12@gmail.com");
+  const [password, setPassword] = useState("123456");
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 

@@ -1,62 +1,47 @@
-import './PGCard.css';
-import { MapPin, Star } from 'lucide-react';
+import "./PGCard.css";
+import { MapPin, Phone } from "lucide-react";
+import SecureImage from "./SecureImage"; // Update path if needed
+import { useNavigate } from "react-router-dom";
 
-const PGCard = ({ data, onCardClick }) => {
-  const {
-    name,
-    vicinity,
-    photos,
-    rating,
-    price = 5113,
-    gender = "MEN'S",
-    discount = 5,
-    distance = 4.47,
-  } = data;
+const PGCard = ({ data: pg, onCardClick }) => {
+  const navigate = useNavigate();
+  const { name, type, address, city, state, pin, contact, imageUrl } = pg;
 
-  const photo = photos?.[0]?.photo_reference
-    ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photos[0].photo_reference}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
-    : "https://via.placeholder.com/400x250";
+  const location = `${address}, ${city}, ${state} - ${pin}`;
+  const filename = imageUrl?.split("/").pop();
+  const role = localStorage.getItem("role");
 
   return (
-    <div className="pg-card" onClick={() => onCardClick()}>
-      <div className="pg-image-container">
-        <img src={photo} alt={name || "PG Image"} className="pg-image" />
-        <button className="pg-fav-btn">♡</button>
+    <div className="pg-card my-3" onClick={() =>  navigate("/pgdetails", { state: { pg } })}>
+      <div className="pg-image-container md:w-1/3 h-48 md:h-auto overflow-hidden">
+        {filename && (
+          <SecureImage
+            filename={filename}
+            alt={name}
+            width="100%"
+            height="100%"
+          />
+        )}
       </div>
 
       <div className="pg-body">
-        {/* PG Name */}
         {name && <h3 className="pg-title">{name}</h3>}
 
-        {/* Vicinity and Gender */}
-        {(vicinity || gender) && (
-          <p className="pg-subtitle">
-            {gender && <span className="pg-gender">{gender}</span>}
-            {vicinity && <> PG in {vicinity}</>}
-          </p>
-        )}
+        {type && <p className="pg-subtitle pg-gender">{type} PG</p>}
 
-        {/* Rating */}
-        {rating && (
-          <div className="pg-rating">
-            <Star size={16} color="#ffc107" />
-            <span>{rating}</span>
-          </div>
-        )}
-
-        {/* Price & Discount
-        <div className="pg-price-section">
-          <span className="pg-price">₹ {price.toLocaleString()}</span>
-          <span className="pg-discount">UPTO {discount}% OFF</span>
-        </div> */}
-
-        {/* Distance */}
-        {/* {distance && (
+        {location && (
           <div className="pg-distance">
             <MapPin size={16} />
-            <span>{distance} km from your location</span>
+            <span>{location}</span>
           </div>
-        )} */}
+        )}
+
+        {contact && (
+          <div className="pg-distance">
+            <Phone size={16} />
+            <span>{contact}</span>
+          </div>
+        )}
       </div>
     </div>
   );

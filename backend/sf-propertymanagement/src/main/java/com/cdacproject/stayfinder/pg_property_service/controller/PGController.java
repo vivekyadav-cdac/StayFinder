@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -115,7 +116,7 @@ public class PGController {
 
 
 
-    @PreAuthorize("hasAnyRole('OWNER','USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT','ADMIN')")
     @GetMapping
     public ResponseEntity<Page<PGResponseDto>> getAll(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int size,
@@ -126,7 +127,7 @@ public class PGController {
         return ResponseEntity.ok(result);
     }
 
-    @PreAuthorize("hasAnyRole('OWNER','USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT','ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PGResponseDto> getById(@PathVariable Long id) {
         PG pg = pgService.getPGById(id)
@@ -134,7 +135,7 @@ public class PGController {
         return ResponseEntity.ok(pgMapper.toResponseDto(pg, gatewayUrl));
     }
 
-    @PreAuthorize("hasRole('OWNER','ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, HttpServletRequest request) {
         String userIdHeader = request.getHeader("X-User-Id");
@@ -148,4 +149,15 @@ public class PGController {
         pgService.deletePG(id, ownerId);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAnyRole('OWNER','ADMIN')")
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<PGResponseDto>> getByOwnerId(@PathVariable Long ownerId) {
+        List<PG> pgList = pgService.getPGsByOwnerId(ownerId);
+        List<PGResponseDto> responseList = pgList.stream()
+                .map(pg -> pgMapper.toResponseDto(pg, gatewayUrl))
+                .toList();
+        return ResponseEntity.ok(responseList);
+    }
+
 }
