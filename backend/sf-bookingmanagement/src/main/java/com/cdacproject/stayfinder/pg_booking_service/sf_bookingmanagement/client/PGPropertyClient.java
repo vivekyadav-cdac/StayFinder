@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "sf-property-service", configuration = FeignClientConfig.class)
 public interface PGPropertyClient {
 
-    @PreAuthorize("hasAnyRole('OWNER','USER')")
+    @PreAuthorize("hasAnyRole('OWNER','TENANT')")
     @GetMapping("api/pgs/{id}")
     public ResponseEntity<PGResponseDto> getById(@PathVariable Long id);
 }

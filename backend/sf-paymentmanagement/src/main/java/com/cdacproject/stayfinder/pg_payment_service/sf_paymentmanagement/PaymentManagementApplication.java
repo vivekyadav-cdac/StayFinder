@@ -12,7 +12,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @EnableJpaAuditing
 @EnableDiscoveryClient
 @EnableWebSecurity
-public class PaymentManagementApplication {
+public class
+PaymentManagementApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PaymentManagementApplication.class, args);

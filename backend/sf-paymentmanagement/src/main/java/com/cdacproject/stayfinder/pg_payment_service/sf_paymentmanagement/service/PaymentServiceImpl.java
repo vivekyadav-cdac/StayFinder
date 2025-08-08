@@ -10,6 +10,7 @@ import com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.feign.
 import com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.repository.PaymentRepository;
 import com.cdacproject.stayfinder.pg_payment_service.sf_paymentmanagement.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,11 +41,20 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("booking id"+request.getBookingId());
         // 3. Get PG Owner from Property service
 
-        PGResponseDto pg = pgClient.getById(booking.getPgId()).getBody();
-System.out.println("pg owner id "+pg.getOwnerId());
-        if (pg == null) {
+//        PGResponseDto pg = pgClient.getById(booking.getPgId()).getBody();
+//System.out.println("pg owner id "+pg.getOwnerId());
+//        if (pg == null) {
+//            throw new ResourceNotFoundException("PG not found for booking");
+//        }
+
+        ResponseEntity<PGResponseDto> pgResponse = pgClient.getById(booking.getPgId());
+        if (pgResponse == null || !pgResponse.getStatusCode().is2xxSuccessful() || pgResponse.getBody() == null) {
             throw new ResourceNotFoundException("PG not found for booking");
         }
+
+        PGResponseDto pg = pgResponse.getBody();
+        System.out.println("pg owner id "+pg.getOwnerId());
+
 
         // 4. Create payment entity
         Payment payment = Payment.builder()

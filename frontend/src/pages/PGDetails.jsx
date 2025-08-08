@@ -1,20 +1,92 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import SecureImage from "../components/SecureImage";
 import AddRoomModal from "../components/AddRoomModal";
+import { deletePg } from "../features/pg/pgSlice";
+import { createBooking } from "../features/bookingSlice";
 
 const PGDetails = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [pg, setPg] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const role = localStorage.getItem("role");
+
+  // Booking form state for dates per room
+  const [bookingDates, setBookingDates] = useState({
+    startDate: "",
+    endDate: "",
+  });
+
+  // Redux states
+  const { loading: pgLoading } = useSelector((state) => state.pg);
+  const { loading: bookingLoading } = useSelector((state) => state.booking);
 
   useEffect(() => {
     setPg(state?.pg);
   }, [state?.pg]);
 
-  if (!pg)
+  // Handle PG deletion with confirmation
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this PG?")) {
+      dispatch(deletePg(pg.id))
+        .unwrap()
+        .then(() => {
+          alert("PG deleted successfully!");
+          navigate("/"); // Redirect to home or PG list
+        })
+        .catch((err) => {
+          alert(err || "Failed to delete PG");
+        });
+    }
+  };
+
+  // Handle date input changes
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    setBookingDates((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle booking a room
+  const handleBookNow = (roomId) => {
+    const { startDate, endDate } = bookingDates;
+
+    if (!startDate || !endDate) {
+      alert("Please select start and end dates.");
+      return;
+    }
+    if (new Date(startDate) >= new Date(endDate)) {
+      alert("End date must be after start date.");
+      return;
+    }
+
+    if (window.confirm("Confirm booking this room?")) {
+      dispatch(
+        createBooking({
+          pgId: pg.id,
+          roomId,
+          startDate,
+          endDate,
+        })
+      )
+        .unwrap()
+        .then(() => {
+          alert("Booking successful!");
+          // Optionally clear dates after booking
+          setBookingDates({ startDate: "", endDate: "" });
+        })
+        .catch((err) => {
+          alert(err || "Failed to book room");
+        });
+    }
+  };
+
+  if (!pg) {
     return <div className="text-center mt-10">PG details not found.</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto" style={{ padding: 10 }}>
@@ -27,7 +99,7 @@ const PGDetails = () => {
 
       {/* PG main info */}
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <div className=" mb-6" style={{ width: "50%" }}>
+        <div className="mb-6" style={{ width: "50%" }}>
           {pg.imageUrl && (
             <SecureImage
               filename={pg.imageUrl.split("/").pop()}
@@ -38,7 +110,7 @@ const PGDetails = () => {
             />
           )}
         </div>
-        <div style={{ width: "50%", marginTop: 20 }}>
+        <div style={{ width: "30%", marginTop: 20 }}>
           <h1 className="text-3xl font-bold">{pg.name}</h1>
           <p className="text-gray-700">
             {pg.address}, {pg.city}, {pg.state} - {pg.pin}
@@ -57,6 +129,16 @@ const PGDetails = () => {
               <span className="font-medium">Created:</span>{" "}
               {new Date(pg.createdAt).toLocaleString()}
             </div>
+
+            {role === "OWNER" && (
+              <button
+                className="btn btn-outline-danger my-2"
+                onClick={handleDelete}
+                disabled={pgLoading}
+              >
+                {pgLoading ? "Deleting..." : "Delete PG"}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -70,7 +152,7 @@ const PGDetails = () => {
           marginBottom: 20,
         }}
       >
-        <div style={{ height: 300, width: "50%" }}>
+        <div style={{ height: 300, width: "40%" }}>
           <iframe
             title="map"
             className="w-full h-full rounded-lg"
@@ -114,13 +196,47 @@ const PGDetails = () => {
                   <p className="text-gray-600 mb-1">Type: {room.type}</p>
                   <p className="text-gray-600">Rent: ₹{room.rent}</p>
 
-                  {role === "TENANT" && (
-                    <button
-                      className="btn btn-success me-2 mb-2"
-                      onClick={() => {}}
-                    >
-                      Book Now
-                    </button>
+                  {role === "TENANT" && room.available && (
+                    <>
+                      <div className="mb-2 text-start px-3">
+                        <label className="form-label">Start Date:</label>
+                        <input
+                          type="date"
+                          name="startDate"
+                          value={bookingDates.startDate}
+                          onChange={handleDateChange}
+                          className="form-control"
+                          min={new Date().toISOString().split("T")[0]} // today
+                        />
+                      </div>
+                      <div className="mb-2 text-start px-3">
+                        <label className="form-label">End Date:</label>
+                        <input
+                          type="date"
+                          name="endDate"
+                          value={bookingDates.endDate}
+                          onChange={handleDateChange}
+                          className="form-control"
+                          min={
+                            bookingDates.startDate ||
+                            new Date().toISOString().split("T")[0]
+                          }
+                        />
+                      </div>
+                      <button
+                        className="btn btn-success me-2 mb-2"
+                        disabled={
+                          bookingLoading ||
+                          !bookingDates.startDate ||
+                          !bookingDates.endDate ||
+                          new Date(bookingDates.startDate) >=
+                            new Date(bookingDates.endDate)
+                        }
+                        onClick={() => handleBookNow(room.id)}
+                      >
+                        {bookingLoading ? "Booking..." : "Book Now"}
+                      </button>
+                    </>
                   )}
                 </div>
               ))}

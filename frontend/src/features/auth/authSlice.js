@@ -15,6 +15,7 @@ export const loginUser = createAsyncThunk(
         
         localStorage.setItem("role", decoded.role);
         localStorage.setItem("userId",decoded.userId);
+        localStorage.setItem("email",decoded.sub)
         return res.data;
       }
     } catch (error) {
